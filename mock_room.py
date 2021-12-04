@@ -12,6 +12,18 @@ class MockRoom():
         }
         self.exit = False
         self.pillar = False
+        self.has_player = False
+
+    def get_player(self):
+        return self.has_player()
+
+    def enter(self, adv):
+        self.has_player = True
+        return
+    
+    def leave(self):
+        self.has_player = False
+        return
 
     def get_n(self):
         return self.compass_dict["n"]
