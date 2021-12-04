@@ -83,4 +83,5 @@ class DungeonTest(unittest.TestCase):
         my_dungeon, entrance_room, next_room, adv = self.make_toy_dungeon()
 
 
-
+if __name__ == "__main__":
+    unittest.main()

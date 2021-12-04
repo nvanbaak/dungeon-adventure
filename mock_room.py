@@ -61,10 +61,10 @@ class MockRoom():
     def is_exit(self):
         return self.exit
 
-    def enter(adventurer):
+    def enter(self, adventurer):
         pass
 
-    def leave():
+    def leave(self):
         pass
 
     def __str__(self):
