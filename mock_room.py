@@ -79,7 +79,7 @@ class MockRoom():
         if self.pillar:
             item = self.pillar
         elif self.exit:
-            item = "X"
+            item = "O"
         else:
             item = " "
 

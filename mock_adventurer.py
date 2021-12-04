@@ -1,5 +1,5 @@
 # mock object for Adventurer
 
 class MockAdventurer():
-    def __init__(self) -> None:
+    def __init__(self, name, game) -> None:
         pass
