@@ -1,4 +1,43 @@
 
+from mock_room import MockRoom as Room
+
+
 class Dungeon():
+    """
+    An object that manages the Dungeon and the objects inside of it.
+    """
     def __init__(self, diff, game):
-        pass
+        self.__diff = diff
+        self.__game = game
+        self.__size = 5 + (2 * diff)
+        self.__entrance = None
+        self.__pl_location = None
+        self.__room_count = 0
+
+
+
+
+    #########
+    # Debug code used only for unit tests
+    #########
+
+    def debug_set_entrance(self, room):
+        self.__entrance = room
+    
+    def debug_get_entrance(self):
+        return self.__entrance
+
+    def debug_set_pl_location(self, room):
+        self.__pl_location = room
+
+    def debug_get_pl_location(self):
+        return self.__pl_location
+
+    def debug_get_difficulty(self):
+        return self.__diff
+    
+    def debug_get_size(self):
+        return self.__size
+    
+    def debug_get_room_count(self):
+        return self.__room_count
