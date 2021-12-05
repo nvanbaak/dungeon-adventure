@@ -77,10 +77,10 @@ class MockRoom():
         return self.exit
 
     def enter(self, adventurer):
-        pass
+        self.has_player = True
 
     def leave(self):
-        pass
+        self.has_player = False
 
     def __str__(self):
 
@@ -91,7 +91,9 @@ class MockRoom():
 
         item = None
 
-        if self.pillar:
+        if self.has_player:
+            item = "@"
+        elif self.pillar:
             item = self.pillar
         elif self.exit:
             item = "O"
