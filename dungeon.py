@@ -14,6 +14,40 @@ class Dungeon():
         self.__pl_location = None
         self.__room_count = 0
 
+    def move_player(self, adv, dir):
+        """
+        Moves the player within the dungeon if there's an open door in the specified direction.
+        Raises ValueError if dir isn't "n", "w", "e", or "s"
+        params:
+        :adv: a reference to the adventurer.
+        :dir: the direction to move in.
+        :returns: None.
+        """
+
+        if not (dir == "n" or dir == "w" or dir == "e" or dir == "s"):
+            raise ValueError("Invalid move command!")
+
+        pl_room : Room = self.__pl_location
+        target_room : Room = pl_room.get_dir(dir)
+        pl_name = adv.get_name()
+        dir_names = {
+            "n" : "north",
+            "w" : "west",
+            "e" : "east",
+            "s" : "south"
+        }
+
+        if target_room:
+            target_room.enter(adv)
+            self.__pl_location = target_room
+            pl_room.leave()
+
+            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
+
+        else:
+            self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
+
+
 
 
 

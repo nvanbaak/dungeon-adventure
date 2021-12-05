@@ -15,7 +15,7 @@ class MockRoom():
         self.has_player = False
 
     def get_player(self):
-        return self.has_player()
+        return self.has_player
 
     def enter(self, adv):
         self.has_player = True
@@ -24,6 +24,9 @@ class MockRoom():
     def leave(self):
         self.has_player = False
         return
+
+    def get_dir(self, dir):
+        return self.compass_dict[dir]
 
     def get_n(self):
         return self.compass_dict["n"]
