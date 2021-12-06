@@ -46,6 +46,9 @@ class MockRoom():
     def get_location(self):
         return self.location
 
+    def clear_room(self):
+        pass
+
     def wall(self, dir):
         self.compass_dict[dir] = False
 

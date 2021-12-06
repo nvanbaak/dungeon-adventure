@@ -33,7 +33,7 @@ class DungeonTest(unittest.TestCase):
 
         # ensure adventurer is in the entrance room
         # self.assertTrue(entrance_room._Room__has_player)
-        self.assertEqual(my_dungeon.debug_get_pl_location().get_id(), 0)
+        self.assertEqual(my_dungeon.debug_get_player_location().get_id(), 0)
 
     def test_validation(self):
         my_game = Game()
