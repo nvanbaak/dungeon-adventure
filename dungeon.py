@@ -79,7 +79,6 @@ class Dungeon():
 
         # once rooms are built, generate pillars and exit
 
-
     def __create_entrance(self, adv) -> list[Room]:
         """
         Helper function that adds an entrance and four connected rooms
@@ -295,7 +294,7 @@ class Dungeon():
 
     def debug_set_entrance(self, room):
         self.__entrance = room
-    
+
     def debug_get_entrance(self):
         return self.__entrance
 
@@ -307,14 +306,9 @@ class Dungeon():
 
     def debug_get_difficulty(self):
         return self.__diff
-    
+
     def debug_get_size(self):
         return self.__size
-    
+
     def debug_get_room_count(self):
         return self.__room_count
-
-
-my_dungeon = Dungeon(2, "game lol")
-my_dungeon.generate(MockAdventurer("test dude", "game lol"))
-my_dungeon.display(3)
