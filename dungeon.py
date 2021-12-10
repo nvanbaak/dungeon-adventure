@@ -1,13 +1,14 @@
 import random
-from mock_adventurer import MockAdventurer
+from adventurer import Adventurer
 from mock_room import MockRoom as Room
+from mock_game import MockGame as Game
 
 
 class Dungeon():
     """
     An object that manages the Dungeon and the objects inside of it.
     """
-    def __init__(self, diff, game) -> None:
+    def __init__(self, diff, game : Game) -> None:
         self.__diff = diff
         self.__game = game
         self.__size = 3 + (2 * diff)
@@ -22,7 +23,7 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
-    def generate(self, adv) -> None:
+    def generate(self, adv : Adventurer) -> None:
         """
         Builds out the dungeon and places objects inside.
         """
@@ -176,7 +177,7 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
-    def move_player(self, adv, dir) -> None:
+    def move_player(self, adv : Adventurer, dir) -> None:
         """
         Moves the player within the dungeon if there's an open door in the specified direction.
         Raises ValueError if dir isn't "n", "w", "e", or "s"
