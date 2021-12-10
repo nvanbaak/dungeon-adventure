@@ -30,6 +30,7 @@ class Adventurer:
             raise Exception("Attempted to collect pillar <", pillar, "> a second time.")
         if pillar == "A" or pillar == "E" or pillar == "I" or pillar == "P":
             self.__pillars.append(pillar)
+
         else:
             raise Exception("The pillar value <" + pillar + "> is neither 'A', 'E', 'I', or 'P'!!!")
 
@@ -37,6 +38,7 @@ class Adventurer:
         """
         Increments health potion count by 1.
         """
+
         self.__health_p += 1
         return self.__health_p
 
@@ -50,6 +52,7 @@ class Adventurer:
 
         if self.__health_p > 0:
             self.__health_p -= 1
+
 
             self.__hp += heal
             if self.__hp >= self.__max_hp:
@@ -66,6 +69,7 @@ class Adventurer:
         """
         Increments vision potion count by 1.
         """
+
         self.__vision_p += 1
         return self.__vision_p
 
@@ -108,6 +112,7 @@ adventurer = Adventurer("Jack", Game())
 print("\n------------------------print adventurer status ('empty', try using either potion)-------------------------")
 adventurer.use_health_potion()
 adventurer.use_vision_potion()
+
 print(adventurer)
 
 print("\n------------------------print adventurer status (+1 potion)-------------------------")
@@ -122,12 +127,15 @@ print("\n------------------------print adventurer status (take 1st health potion
 adventurer.use_health_potion()
 print(adventurer)
 
+
 print("\n------------------------print adventurer status (Add two of each potion)-------------------------")
 adventurer.add_health_potion()
 adventurer.add_health_potion()
 adventurer.add_vision_potion()
 adventurer.add_vision_potion()
+
 print(adventurer)
+
 
 print("\n------------------------print adventurer status (Add 'A' to the Pillars + adding an extra 'A' and a false 'z')"
       "-------------------------")
@@ -143,6 +151,7 @@ try:
     print("should have failed.")
 except:
     pass
+
 
 print(adventurer)
 
@@ -164,6 +173,7 @@ print("\n------------------------print adventurer exit (doesn't have all Pillars
 adventurer.exit()
 
 print(adventurer)
+
 
 
 print("\n------------------------print adventurer status (Add 'E', 'I', 'P')-------------------------")
