@@ -4,4 +4,4 @@ class MockGame():
         pass
 
     def announce(self, str):
-        pass
+        print(str)
