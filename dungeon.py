@@ -10,7 +10,7 @@ class Dungeon():
     def __init__(self, diff, game) -> None:
         self.__diff = diff
         self.__game = game
-        self.__size = 7 + (2 * diff)
+        self.__size = 3 + (2 * diff)
         self.__entrance = None
         self.__pl_location = None
         self.__room_count = 0
@@ -48,7 +48,7 @@ class Dungeon():
                     if new_room.get_dir(dir) is None:
 
                         # random chance to make wall or corridor
-                        chance_to_wall = .5
+                        chance_to_wall = .55
                         if random.random() < chance_to_wall:
                             new_room.wall(dir)
                         else:
@@ -69,16 +69,15 @@ class Dungeon():
         # check that sufficient rooms were generated
         room_cutoff = self.__size * self.__size * .85
         if self.__room_count < room_cutoff:
-            print("maze too small!")
-        
-        
-        # print(self.display(3))
-        print(self)
+            print("Maze too small!  Regenerating...")
+            self.__clear_dungeon()
+            self.generate(adv)
+            return
 
+        print(self.display(3))
+        # print(self)
 
-
-            # once rooms are built, generate pillars and exit
-
+        # once rooms are built, generate pillars and exit
 
     def __create_entrance(self, adv) -> list[Room]:
         """
@@ -162,6 +161,21 @@ class Dungeon():
         """
         return self.__room_array[location[1]][location[0]]
 
+    def __clear_dungeon(self):
+        """
+        Helper method to reset the dungeon.
+        """
+        self.__entrance = None
+        self.__pl_location = None
+        self.__room_count = 0
+        self.__room_array = []
+
+        for _ in range(self.__size):
+            row = []
+            for _ in range(self.__size):
+                row.append(None)
+            self.__room_array.append(row)
+
     def move_player(self, adv, dir) -> None:
         """
         Moves the player within the dungeon if there's an open door in the specified direction.
@@ -214,15 +228,15 @@ class Dungeon():
                     line3 += "###"
                 else:
                     room = room.__str__().split("\n")
-                    line1 += room[0]
-                    line2 += room[1]
-                    line3 += room[2]
+                    line1 += str(room[0])
+                    line2 += str(room[1])
+                    line3 += str(room[2])
 
             output_str += f"{line1}\n{line2}\n{line3}\n"
 
         return output_str
 
-    def display(self, range) -> str:
+    def display(self, vis_range) -> str:
         """
         Returns a string representing only the parts of the dungeon
         the player can see.
@@ -235,9 +249,11 @@ class Dungeon():
 
         for direction in ["n","w","s","e"]:
             next_room : Room = self.__pl_location.get_dir(direction)
-            if next_room:
+            for _ in range(0, vis_range):
                 visible_rooms[next_room.get_id()] = True
                 next_room = next_room.get_dir(direction)
+                if not next_room:
+                    break
 
         # Then we follow a similar process to __str__
         output_str = ""
@@ -278,7 +294,7 @@ class Dungeon():
 
     def debug_set_entrance(self, room):
         self.__entrance = room
-    
+
     def debug_get_entrance(self):
         return self.__entrance
 
@@ -290,13 +306,9 @@ class Dungeon():
 
     def debug_get_difficulty(self):
         return self.__diff
-    
+
     def debug_get_size(self):
         return self.__size
-    
+
     def debug_get_room_count(self):
         return self.__room_count
-
-
-my_dungeon = Dungeon(2, "game lol")
-my_dungeon.generate(MockAdventurer("test dude", "game lol"))
