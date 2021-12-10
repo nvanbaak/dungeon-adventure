@@ -10,7 +10,7 @@ class Dungeon():
     def __init__(self, diff, game) -> None:
         self.__diff = diff
         self.__game = game
-        self.__size = 7 + (2 * diff)
+        self.__size = 3 + (2 * diff)
         self.__entrance = None
         self.__pl_location = None
         self.__room_count = 0
@@ -70,8 +70,10 @@ class Dungeon():
         room_cutoff = self.__size * self.__size * .85
         if self.__room_count < room_cutoff:
             print("maze too small!")
-        
-        
+            self.__clear_dungeon()
+            self.generate(adv)
+            return
+
         # print(self.display(3))
         print(self)
 
@@ -161,6 +163,21 @@ class Dungeon():
         and returns the object at that location in room_array
         """
         return self.__room_array[location[1]][location[0]]
+
+    def __clear_dungeon(self):
+        """
+        Helper method to reset the dungeon.
+        """
+        self.__entrance = None
+        self.__pl_location = None
+        self.__room_count = 0
+        self.__room_array = []
+
+        for _ in range(self.__size):
+            row = []
+            for _ in range(self.__size):
+                row.append(None)
+            self.__room_array.append(row)
 
     def move_player(self, adv, dir) -> None:
         """
