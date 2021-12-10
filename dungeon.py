@@ -1,4 +1,5 @@
 import random
+from mock_adventurer import MockAdventurer
 from mock_room import MockRoom as Room
 
 
@@ -9,7 +10,7 @@ class Dungeon():
     def __init__(self, diff, game) -> None:
         self.__diff = diff
         self.__game = game
-        self.__size = 5 + (2 * diff)
+        self.__size = 7 + (2 * diff)
         self.__entrance = None
         self.__pl_location = None
         self.__room_count = 0
@@ -47,7 +48,7 @@ class Dungeon():
                     if new_room.get_dir(dir) is None:
 
                         # random chance to make wall or corridor
-                        chance_to_wall = .3
+                        chance_to_wall = .5
                         if random.random() < chance_to_wall:
                             new_room.wall(dir)
                         else:
@@ -64,6 +65,20 @@ class Dungeon():
 
                 except IndexError: # if we exceed the array bounds, wall
                     new_room.wall(dir)
+
+        # check that sufficient rooms were generated
+        room_cutoff = self.__size * self.__size * .85
+        if self.__room_count < room_cutoff:
+            print("maze too small!")
+        
+        
+        # print(self.display(3))
+        print(self)
+
+
+
+            # once rooms are built, generate pillars and exit
+
 
     def __create_entrance(self, adv) -> list[Room]:
         """
@@ -102,6 +117,8 @@ class Dungeon():
         self.__double_link(entrance_room, east_room, "e")
         rooms_to_build.append(east_room)
 
+        return rooms_to_build
+
     def __make_new_room(self, location) -> Room:
         """
         Helper method that automatically creates a new Room obj at the coords.
@@ -113,7 +130,8 @@ class Dungeon():
         """
         new_room = Room(self.__room_count, location)
         self.__room_count += 1
-        self.__room_array[location[0]][location[1]] = new_room
+        # due to how room_array is stored, y is first
+        self.__room_array[location[1]][location[0]] = new_room
         return new_room
 
     def __double_link(self, room1 : Room, room2 : Room, dir) -> None:
@@ -142,7 +160,7 @@ class Dungeon():
         Helper method that takes a tuple with x/y coordinates
         and returns the object at that location in room_array
         """
-        return self.__room_array[location[0]][location[1]]
+        return self.__room_array[location[1]][location[0]]
 
     def move_player(self, adv, dir) -> None:
         """
@@ -278,3 +296,7 @@ class Dungeon():
     
     def debug_get_room_count(self):
         return self.__room_count
+
+
+my_dungeon = Dungeon(2, "game lol")
+my_dungeon.generate(MockAdventurer("test dude", "game lol"))
