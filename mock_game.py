@@ -5,3 +5,6 @@ class MockGame():
 
     def announce(self, str):
         print(str)
+
+    def end_game(self):
+        pass

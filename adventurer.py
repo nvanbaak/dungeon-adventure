@@ -28,14 +28,8 @@ class Adventurer:
         """
         if pillar in self.__pillars:
             raise Exception("Attempted to collect pillar <", pillar, "> a second time.")
-        if pillar is "A":
-            self.__pillars.append("A")
-        elif pillar is "E":
-            self.__pillars.append("E")
-        elif pillar is "I":
-            self.__pillars.append("I")
-        elif pillar is "P":
-            self.__pillars.append("P")
+        if pillar == "A" or pillar == "E" or pillar == "I" or pillar == "P":
+            self.__pillars.append(pillar)
         else:
             raise Exception("The pillar value <" + pillar + "> is neither 'A', 'E', 'I', or 'P'!!!")
 
@@ -109,7 +103,7 @@ class Adventurer:
                str(self.__pillars)
 
 
-adventurer = Adventurer("Jack", "1")
+adventurer = Adventurer("Jack", Game())
 
 print("\n------------------------print adventurer status ('empty', try using either potion)-------------------------")
 adventurer.use_health_potion()
