@@ -15,7 +15,7 @@ class MockRoom():
         self.has_player = False
 
     def get_player(self):
-        return self.has_player()
+        return self.has_player
 
     def enter(self, adv):
         self.has_player = True
@@ -24,6 +24,9 @@ class MockRoom():
     def leave(self):
         self.has_player = False
         return
+
+    def get_dir(self, dir):
+        return self.compass_dict[dir]
 
     def get_n(self):
         return self.compass_dict["n"]
@@ -42,6 +45,9 @@ class MockRoom():
 
     def get_location(self):
         return self.location
+
+    def clear_room(self):
+        pass
 
     def wall(self, dir):
         self.compass_dict[dir] = False
@@ -74,10 +80,10 @@ class MockRoom():
         return self.exit
 
     def enter(self, adventurer):
-        pass
+        self.has_player = True
 
     def leave(self):
-        pass
+        self.has_player = False
 
     def __str__(self):
 
@@ -88,7 +94,9 @@ class MockRoom():
 
         item = None
 
-        if self.pillar:
+        if self.has_player:
+            item = "@"
+        elif self.pillar:
             item = self.pillar
         elif self.exit:
             item = "O"

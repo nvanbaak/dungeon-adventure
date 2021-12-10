@@ -13,7 +13,7 @@ class DungeonTest(unittest.TestCase):
         self.assertEqual(my_dungeon.debug_get_difficulty(), 1)
         self.assertEqual(my_dungeon.debug_get_size(), 7)
         self.assertEqual(my_dungeon.debug_get_entrance(), None)
-        self.assertEqual(my_dungeon.debug_get_pl_location(), None)
+        self.assertEqual(my_dungeon.debug_get_player_location(), None)
         self.assertEqual(my_dungeon.debug_get_room_count(), 0)
 
     def test_generate(self):
@@ -33,7 +33,7 @@ class DungeonTest(unittest.TestCase):
 
         # ensure adventurer is in the entrance room
         # self.assertTrue(entrance_room._Room__has_player)
-        self.assertEqual(my_dungeon.debug_get_pl_location().get_id(), 0)
+        self.assertEqual(my_dungeon.debug_get_player_location().get_id(), 0)
 
     def test_validation(self):
         my_game = Game()
@@ -98,7 +98,7 @@ class DungeonTest(unittest.TestCase):
         my_dungeon.move_player(adv, "w")
         self.assertFalse(next_room.get_player())
         self.assertTrue(entrance_room.get_player())
-        self.assertTrue(my_dungeon.debug_get_player_location().has_player())
+        self.assertTrue(my_dungeon.debug_get_player_location().get_player())
 
     def test_display(self):
         my_game = Game()
@@ -167,7 +167,15 @@ class DungeonTest(unittest.TestCase):
         east_room.wall("s")
 
         east_room.link(entrance_room, "w")
-        entrance_room.link(east_room, "w")
+        entrance_room.link(east_room, "e")
+
+        room_array = [
+            [west_corridor, north_room, None],
+            [west_room, entrance_room, east_room],
+            [None, south_room, None]
+        ]
+
+        my_dungeon.debug_set_room_array(room_array)
 
         vision_range = 3
         display_str = my_dungeon.display(vision_range)
