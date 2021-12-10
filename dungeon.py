@@ -48,7 +48,7 @@ class Dungeon():
                     if new_room.get_dir(dir) is None:
 
                         # random chance to make wall or corridor
-                        chance_to_wall = .5
+                        chance_to_wall = .55
                         if random.random() < chance_to_wall:
                             new_room.wall(dir)
                         else:
@@ -69,17 +69,15 @@ class Dungeon():
         # check that sufficient rooms were generated
         room_cutoff = self.__size * self.__size * .85
         if self.__room_count < room_cutoff:
-            print("maze too small!")
+            print("Maze too small!  Regenerating...")
             self.__clear_dungeon()
             self.generate(adv)
             return
 
-        # print(self.display(3))
-        print(self)
+        print(self.display(3))
+        # print(self)
 
-
-
-            # once rooms are built, generate pillars and exit
+        # once rooms are built, generate pillars and exit
 
 
     def __create_entrance(self, adv) -> list[Room]:
@@ -231,15 +229,15 @@ class Dungeon():
                     line3 += "###"
                 else:
                     room = room.__str__().split("\n")
-                    line1 += room[0]
-                    line2 += room[1]
-                    line3 += room[2]
+                    line1 += str(room[0])
+                    line2 += str(room[1])
+                    line3 += str(room[2])
 
             output_str += f"{line1}\n{line2}\n{line3}\n"
 
         return output_str
 
-    def display(self, range) -> str:
+    def display(self, vis_range) -> str:
         """
         Returns a string representing only the parts of the dungeon
         the player can see.
@@ -252,9 +250,11 @@ class Dungeon():
 
         for direction in ["n","w","s","e"]:
             next_room : Room = self.__pl_location.get_dir(direction)
-            if next_room:
+            for _ in range(0, vis_range):
                 visible_rooms[next_room.get_id()] = True
                 next_room = next_room.get_dir(direction)
+                if not next_room:
+                    break
 
         # Then we follow a similar process to __str__
         output_str = ""
@@ -317,3 +317,4 @@ class Dungeon():
 
 my_dungeon = Dungeon(2, "game lol")
 my_dungeon.generate(MockAdventurer("test dude", "game lol"))
+my_dungeon.display(3)
