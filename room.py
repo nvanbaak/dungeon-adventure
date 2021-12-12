@@ -1,5 +1,5 @@
 import random
-class room:
+class Room:
     def __init__(self):
         self.__health_p = True
         self.__vision_p = True
