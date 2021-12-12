@@ -1,6 +1,4 @@
 import random
-
-
 class Room:
     def __init__(self):
         self.__health_p = True
@@ -59,7 +57,6 @@ class Room:
     def set_pillar(self, pillar):
         pillars = ["A", "E", "I", "P"]
         self.__pillar = pillar
-
 
 
 
