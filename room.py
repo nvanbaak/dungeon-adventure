@@ -19,7 +19,31 @@ class Room:
         self.__pillar = False
     # builds 2D Graphical representation of the room
     def __str__(self):
-        return f''
+        item_count = 0
+        if self.__health_p:
+            item_count += 1
+        if self.__vision_p:
+            item_count += 1
+        if item_count > 1:
+            return "M"
+        north = " " if self.compass_dict['n'] else "-"
+        west = " " if self.compass_dict['w'] else "|"
+        east = " " if self.compass_dict['e'] else "|"
+        south = " " if self.compass_dict['s'] else "-"
+
+        item = None
+
+        if self.__has_player:
+            item = "@"
+        elif self.__pillar:
+            item = self.__pillar
+        elif self.__exit:
+            item = "O"
+        else:
+            item = " "
+
+        return f"*{north}*\n{west}{item}{east}\n*{south}*"
+
 
     def link(self, room, dir):
         make_link = True
@@ -59,6 +83,14 @@ class Room:
     def set_pillar(self, pillar):
         pillars = ["A", "E", "I", "P"]
         self.__pillar = pillar
+
+    def clear_room(self):
+        self.__health_p = False
+        self.__pit = False
+        self.__vision_p = False
+
+    def set_as_exit(self):
+        self.__exit = True
 
 
 
