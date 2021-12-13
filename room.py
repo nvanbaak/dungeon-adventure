@@ -9,7 +9,6 @@ class Room:
         self.__vision_p = False
         if random.random() < 0.1:
             self.__vision_p = True
-        self.__impassable = False
         self.__pit = False
         if random.random() < 0.1:
             self.__pit = random.randrange(1, 20)
@@ -24,19 +23,21 @@ class Room:
         self.__pillar = False
         self.__room_id = room_id
         self.__location = location
-    # builds 2D Graphical representation of the room
-    def __str__(self):
-        # item_count = 0
-        # if self.__health_p:
-        #     item_count += 1
-        # if self.__vision_p:
-        #     item_count += 1
-        # if item_count > 1:
 
-        north = " " if self.compass_dict['n'] else "-"
-        west = " " if self.compass_dict['w'] else "|"
-        east = " " if self.compass_dict['e'] else "|"
-        south = " " if self.compass_dict['s'] else "-"
+    def get_id(self):
+        return self.__room_id
+    
+    def get_location(self):
+        return self.__location
+
+    def __str__(self):
+        """
+        Builds 2D Graphical representation of the room
+        """
+        north = " " if self.__doors['n'] else "-"
+        west = " " if self.__doors['w'] else "|"
+        east = " " if self.__doors['e'] else "|"
+        south = " " if self.__doors['s'] else "-"
 
         item = None
 
@@ -59,6 +60,8 @@ class Room:
 
         return f"*{north}*\n{west}{item}{east}\n*{south}*"
 
+    def get_player(self):
+        return self.__has_player
 
     def link(self, room, dir):
         compliment = {
@@ -80,9 +83,6 @@ class Room:
 
     def is_exit(self):
         return self.__exit
-
-    def set_has_player(self, player):
-        self.__has_player = player
 
     def set_pillar(self, pillar):
         pillars = ["A", "E", "I", "P"]
