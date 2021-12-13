@@ -4,7 +4,8 @@ import unittest
 from dungeon import Dungeon
 from mock_adventurer import MockAdventurer as Adv
 from mock_game import MockGame as Game
-from mock_room import MockRoom as Room
+#from mock_room import MockRoom as Room
+from room import Room
 
 class DungeonTest(unittest.TestCase):
     def test_init(self):
