@@ -2,9 +2,9 @@
 
 import unittest
 from dungeon import Dungeon
-from mock_adventurer import MockAdventurer as Adv
+from adventurer import Adventurer as Adv
 from mock_game import MockGame as Game
-from mock_room import MockRoom as Room
+from room import Room
 
 class DungeonTest(unittest.TestCase):
     def test_init(self):
@@ -26,10 +26,10 @@ class DungeonTest(unittest.TestCase):
         entrance_room : Room = my_dungeon.debug_get_entrance()
 
         # ensure all doors out of the entrance room are open
-        self.assertNotEqual(entrance_room.get_n(), False)
-        self.assertNotEqual(entrance_room.get_w(), False)
-        self.assertNotEqual(entrance_room.get_e(), False)
-        self.assertNotEqual(entrance_room.get_s(), False)
+        self.assertNotEqual(entrance_room.get_dir("n"), False)
+        self.assertNotEqual(entrance_room.get_dir("w"), False)
+        self.assertNotEqual(entrance_room.get_dir("e"), False)
+        self.assertNotEqual(entrance_room.get_dir("s"), False)
 
         # ensure adventurer is in the entrance room
         # self.assertTrue(entrance_room._Room__has_player)

@@ -1,6 +1,6 @@
 import random
 from adventurer import Adventurer
-from mock_room import MockRoom as Room
+from room import Room
 from mock_game import MockGame as Game
 
 
@@ -11,7 +11,7 @@ class Dungeon():
     def __init__(self, diff, game : Game) -> None:
         self.__diff = diff
         self.__game = game
-        self.__size = 3 + (2 * diff)
+        self.__size = 5 + (2 * diff)
         self.__entrance = None
         self.__pl_location = None
         self.__room_count = 0
