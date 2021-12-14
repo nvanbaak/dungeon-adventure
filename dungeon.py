@@ -30,10 +30,25 @@ class Dungeon():
         # setup entrance and surrounding rooms
         rooms_to_build = self.__create_entrance(adv)
 
+        # we have 4 pillars and an exit to place
+        pillars = ["E", "I", "A", "P"]
+        exit_room = 35 + self.__diff * 5
+
+
         # next, continue adding and linking rooms
         while rooms_to_build:
             new_room : Room = rooms_to_build.pop(0)
             (x, y) = new_room.get_location()
+
+            # use id to place exit and pillars
+            if pillars and new_room.get_id() > 24:
+                pillar_threshold = 0.2
+                if random.random() < pillar_threshold:
+                    new_room.clear_room()
+                    new_room.set_pillar(pillars.pop())
+
+            if new_room.get_id() == exit_room:
+                new_room.set_as_exit()
 
             # populate the dungeon in each direction
             target_location = {
@@ -65,6 +80,9 @@ class Dungeon():
                             self.__double_link(new_room, target_room, dir)
 
                 except IndexError: # if we exceed the array bounds, wall
+                    # Note that going to index [-1] causes wraparound
+                    # and will not trigger this exception.  We consider
+                    # this a feature, not a bug.
                     new_room.wall(dir)
 
         # check that sufficient rooms were generated
@@ -75,10 +93,68 @@ class Dungeon():
             self.generate(adv)
             return
 
+        # check that all pillars and exit were placed
+        if not self.__validate_maze():
+            print("Objective placement failed!  Regenerating...")
+            self.__clear_dungeon()
+            self.generate(adv)
+            return
+
         print(self.display(3))
         # print(self)
 
-        # once rooms are built, generate pillars and exit
+    def __validate_maze(self):
+        """
+        Uses breadth-first search to ensure all objectives are in the maze.
+        Returns True if all objectives are present, False otherwise.
+        """
+        # define flags for objectives
+        pillar_flags = {
+            "A" : False,
+            "E" : False,
+            "I" : False,
+            "P" : False
+        }
+        exit_flag = False
+
+        # Set up beginning of traversal
+        room_dict = {
+            self.__entrance : 0
+        }
+        rooms_to_check = []
+
+        # We do the first loop manually to set up rooms_to_check
+        for dir in ["n", "w", "e", "s"]:
+            target_room = self.__entrance.get_dir(dir)
+            room_dict[target_room] = 1
+            rooms_to_check.append(target_room)
+
+        # now loop through everything else
+        while rooms_to_check:
+            this_room : Room = rooms_to_check.pop(0)
+            this_id = this_room.get_id()
+
+            if this_room.get_pillar():
+                pillar_flags[this_room.get_pillar()] = True
+            if this_room.is_exit():
+                exit_flag = True
+
+            # add adjacent rooms to queue
+            for dir in ["n", "w", "e", "s"]:
+                target_room : Room = this_room.get_dir(dir)
+                if target_room:
+                    target_id = target_room.get_id()
+                    if this_id < target_id: # ensures we're moving outward
+                        rooms_to_check.append(target_room)
+
+        # check flags
+        for pillar in pillar_flags:
+            if not pillar_flags[pillar]:
+                return False
+
+        # reaching this point means all pillars are present,
+        # so the exit flag is what makes or breaks things
+        return exit_flag
 
     def __create_entrance(self, adv) -> list[Room]:
         """

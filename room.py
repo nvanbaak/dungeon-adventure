@@ -89,6 +89,9 @@ class Room:
         if pillar in pillars:
             self.__pillar = pillar
 
+    def get_pillar(self):
+        return self.__pillar
+
     def clear_room(self):
         self.__health_p = False
         self.__pit = False
