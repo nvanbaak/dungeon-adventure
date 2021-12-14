@@ -42,7 +42,8 @@ class DungeonAdventure():
         canvas1.pack(expand=YES, fill=BOTH)
 
         title_image = PhotoImage(file="title_screen.png")
-        canvas1.create_image(0, 0, anchor=NW, image=title_image)
+        print(title_image)
+        canvas1.create_image(50, 50, anchor=NW, image=title_image)
 
         # --Buttons
         button1 = tk.Button(text='Start')
@@ -60,7 +61,6 @@ class DungeonAdventure():
         # --Menu (Help)
         menu_bar = Menu(self.root)
         # file_menu = Menu(menu_bar, tearoff=0)
-
 
         help_menu = Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="Help Index", command=self.donothing)
