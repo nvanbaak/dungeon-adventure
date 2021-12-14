@@ -39,7 +39,10 @@ class DungeonAdventure():
             font="Verdana 10 bold").pack()
 
         canvas1 = tk.Canvas(self.root, width=600, height=400)
-        canvas1.pack()
+        canvas1.pack(expand=YES, fill=BOTH)
+
+        title_image = PhotoImage(file="title_screen.png")
+        canvas1.create_image(0, 0, anchor=NW, image=title_image)
 
         # --Buttons
         button1 = tk.Button(text='Start')
@@ -75,7 +78,7 @@ class DungeonAdventure():
 
     def input_name(self):
         def user_input_adventurer_name():
-            print(f"Name: {adv_name.get()}\nDifficulty: {selected_difficulty}")
+            print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
             messagebox.showinfo("Name info", adv_name.get())
             self.adventurer = Adventurer(adv_name.get(), self)
 
@@ -86,20 +89,22 @@ class DungeonAdventure():
                 text="Difficulty").grid(row=1, rowspan=2)
 
         adv_name = tk.Entry(master)
+        diff = tk.Entry(master)
 
-        selected_difficulty = 1
-        easy = tk.Radiobutton(master, value=1, variable=selected_difficulty)
-        medium = tk.Radiobutton(master, value=2, variable=selected_difficulty)
-        hard = tk.Radiobutton(master, value=3, variable=selected_difficulty)
+        # selected_difficulty = 1
+        # easy = tk.Radiobutton(master, value=1, variable=selected_difficulty)
+        # medium = tk.Radiobutton(master, value=2, variable=selected_difficulty)
+        # hard = tk.Radiobutton(master, value=3, variable=selected_difficulty)
 
-        adv_name.grid(row=0, column=1, columnspan=3)
-        easy.grid(row=1, column=1)
-        medium.grid(row=1, column=2)
-        hard.grid(row=1, column=3)
+        adv_name.grid(row=0, column=1, columnspan=1)
+        diff.grid(row=1, column=1)
+        # easy.grid(row=1, column=1)
+        # medium.grid(row=1, column=2)
+        # hard.grid(row=1, column=3)
 
         tk.Button(master,
                 text='Quit',
-                command=master.quit).grid(row=4,
+                command=quit).grid(row=4,
                                             column=2,
                                             columnspan=2,
                                             sticky=tk.W,
