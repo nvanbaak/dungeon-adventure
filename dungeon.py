@@ -8,7 +8,7 @@ class Dungeon():
     """
     An object that manages the Dungeon and the objects inside of it.
     """
-    def __init__(self, diff, game : Game) -> None:
+    def __init__(self, diff, game : Game, adv: Adventurer) -> None:
         self.__diff = diff
         self.__game = game
         self.__size = 5 + (2 * diff)
@@ -23,7 +23,9 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
-    def generate(self, adv : Adventurer) -> None:
+        self.__generate(adv)
+
+    def __generate(self, adv : Adventurer) -> None:
         """
         Builds out the dungeon and places objects inside.
         """
@@ -90,14 +92,14 @@ class Dungeon():
         if self.__room_count < room_cutoff:
             print("Maze too small!  Regenerating...")
             self.__clear_dungeon()
-            self.generate(adv)
+            self.__generate(adv)
             return
 
         # check that all pillars and exit were placed
         if not self.__validate_maze():
             print("Objective placement failed!  Regenerating...")
             self.__clear_dungeon()
-            self.generate(adv)
+            self.__generate(adv)
             return
 
         print(self.display(3))
@@ -252,6 +254,9 @@ class Dungeon():
             for _ in range(self.__size):
                 row.append(None)
             self.__room_array.append(row)
+
+    def move_north(self, adv):
+        self.move_player(adv, "n")
 
     def move_player(self, adv : Adventurer, dir) -> None:
         """
