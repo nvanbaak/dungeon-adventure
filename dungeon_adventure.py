@@ -1,6 +1,7 @@
 import tkinter as tk
 from adventurer import Adventurer
 from dungeon import Dungeon
+# from PIL import ImageTk, Image
 
 from tkinter import *
 from tkinter import messagebox
@@ -25,23 +26,31 @@ class DungeonAdventure():
         pass
 
     def start_menu(self):
-        canvas1 = tk.Canvas(self.root, width=940, height=675)
-        canvas1.pack(expand=tk.YES, fill=tk.BOTH)
+        # self.root.geometry("940x675")
+        # canvas2 = tk.Canvas(self.root, bg="gray16", height=1000, width=1000)
+        # self.title_image = tk.PhotoImage(file="title_screen.png")
+        # background_label = Label(self.root, image=self.title_image, )
+        # background_label.place(x=0, y=0, relwidth=1, relheight=1)
+        #
+        # canvas2.pack(expand=NO, fill=NONE)
 
-        self.title_image = tk.PhotoImage(file="title_screen.png")
-        canvas1.create_image(0, 0, anchor=NW, image=self.title_image)
+        canvas2 = tk.Canvas(self.root, width=940, height=675)
+        canvas2.pack(expand=tk.YES, fill=tk.BOTH)
+
+        self.title_image = tk.PhotoImage(file="title.png")
+        canvas2.create_image(0, 0, anchor=NW, image=self.title_image)
 
         # --Buttons
         button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
-        canvas1.create_window(650, 500, window=button1)
+        canvas2.create_window(650, 500, window=button1)
         button1.config(command=self.input_name)
 
         button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
-        canvas1.create_window(650, 530, window=button2)
+        canvas2.create_window(650, 530, window=button2)
         button2.config(command=self.display_instructions)
 
         button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
-        canvas1.create_window(650, 560, window=button3)
+        canvas2.create_window(650, 560, window=button3)
         button3.config(command=quit)
 
         # --Menu (Help)
@@ -87,17 +96,17 @@ class DungeonAdventure():
 
         tk.Button(master,
                   text='Quit',
-                  command=quit).grid(row=4,
-                                     column=2,
-                                     columnspan=2,
-                                     sticky=tk.W,
-                                     pady=4)
+                  command=master.destroy).grid(row=4,
+                                               column=2,
+                                               columnspan=2,
+                                               sticky=tk.W,
+                                               pady=4)
         tk.Button(master,
-                  text='Show', command=user_input_adventurer_name).grid(row=4,
-                                                                        column=0,
-                                                                        columnspan=2,
-                                                                        sticky=tk.W,
-                                                                        pady=4)
+                  text='Input', command=user_input_adventurer_name).grid(row=4,
+                                                                         column=0,
+                                                                         columnspan=2,
+                                                                         sticky=tk.W,
+                                                                         pady=4)
 
         tk.mainloop()
 
@@ -105,7 +114,7 @@ class DungeonAdventure():
         instructions = Toplevel(self.root)
         instructions.title("Instructions")
 
-        button = Button(instructions, font="Verdana 20 bold", text="""Welcome!!! You are about to brave our maze inorder to 
+        button = Button(instructions, font="Verdana 19 bold", text="""Welcome!!! You are about to brave our maze inorder to 
         find the four pillars of OO! Only by collecting these four pillars, will you be able to escape the maze and win the 
         game. In this maze, you will use the 'n' letter to head up, the 'e' letter to go right, the 's' letter to go down 
         and the 'w' letter to go left. Be careful though, for there are pits within the maze that can injure you and if you 
