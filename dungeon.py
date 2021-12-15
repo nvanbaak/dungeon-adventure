@@ -17,6 +17,8 @@ class Dungeon():
         self.__room_count = 0
         self.__room_array = []
 
+        self.__adv = None
+
         for _ in range(self.__size):
             row = []
             for _ in range(self.__size):
@@ -29,6 +31,10 @@ class Dungeon():
         """
         Builds out the dungeon and places objects inside.
         """
+
+        # TODO: FIND A BETTER WAY TO DO THIS
+        self.__adv = adv
+
         # setup entrance and surrounding rooms
         rooms_to_build = self.__create_entrance(adv)
 
@@ -255,8 +261,8 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
-    def move_north(self, adv):
-        self.move_player(adv, "n")
+    def move_north(self):
+        self.move_player(self.__adv, "n")
 
     def move_player(self, adv : Adventurer, dir) -> None:
         """

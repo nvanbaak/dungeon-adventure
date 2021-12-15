@@ -11,35 +11,42 @@ class DungeonAdventure():
     def __init__(self):
         self.__dungeon = None
         self.__adventurer = None
+        self.__diff = None
         self.__root = tk.Tk()
         self.__root.title("Dungeon Adventure")
+
+        self.__start_canvas = None
+        self.__st_menu_button1 = None
+        self.__st_menu_button2 = None
+        self.__st_menu_button3 = None
+
+        self.__name_input_window = None
+
         self.start_menu()
 
     def __start_game(self, diff):
         self.__dungeon = Dungeon(diff, self, self.__adventurer)
 
-        game_canvas = tk.Canvas(self.__root, width=940, height=675)
-        game_canvas.pack(expand=tk.YES, fill=tk.BOTH)
+        text_area = tk.Text(self.__root, width=50, height=50)
+        text_area.pack(anchor=NW)
 
         button_n = tk.Button(text="Move North")
         button_n.config(command=self.__dungeon.move_north)
         button_n.pack()
 
-        text_area = tk.Text(self.__root, width=940, height=600)
+        self.hypothetical_game_loop(text_area)
 
-        game_canvas.create_window(650, 500)
-
-        self.hypothetical_game_loop(game_canvas, text_area)
-
-    def hypothetical_game_loop(self, game_canvas, text_area):
+    def hypothetical_game_loop(self, text_area : tk.Text):
 
         # display dungeon using .display() method
+        text_area.insert("1.0", self.__dungeon.display(3))
 
         # wait for player input
 
         # if potion use, use potion
 
         # if move, attempt move
+        self.__root.after(40, self.hypothetical_game_loop(text_area))
         pass
 
     def announce(self, message):
@@ -49,32 +56,28 @@ class DungeonAdventure():
         pass
 
     def start_menu(self):
-        # self.__root.geometry("940x675")
-        # canvas2 = tk.Canvas(self.__root, bg="gray16", height=1000, width=1000)
-        # self.title_image = tk.PhotoImage(file="title_screen.png")
-        # background_label = Label(self.__root, image=self.title_image, )
-        # background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        #
-        # canvas2.pack(expand=NO, fill=NONE)
+        """
+        Creates and displays the start menu.
+        """
 
-        canvas2 = tk.Canvas(self.__root, width=940, height=675)
-        canvas2.pack(expand=tk.YES, fill=tk.BOTH)
+        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
+        self.__start_canvas.pack(expand=tk.YES, fill=tk.BOTH)
 
         self.title_image = tk.PhotoImage(file="title.png")
-        canvas2.create_image(0, 0, anchor=NW, image=self.title_image)
+        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.title_image)
 
         # --Buttons
-        button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
-        canvas2.create_window(650, 500, window=button1)
-        button1.config(command=self.input_name)
+        self.__st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
+        self.__start_canvas.create_window(650, 500, window=self.__st_menu_button1)
+        self.__st_menu_button1.config(command=self.input_name)
 
-        button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
-        canvas2.create_window(650, 530, window=button2)
-        button2.config(command=self.display_instructions)
+        self.__st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
+        self.__start_canvas.create_window(650, 530, window=self.__st_menu_button2)
+        self.__st_menu_button2.config(command=self.display_instructions)
 
-        button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
-        canvas2.create_window(650, 560, window=button3)
-        button3.config(command=quit)
+        self.__st_menu_button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
+        self.__start_canvas.create_window(650, 560, window=self.__st_menu_button3)
+        self.__st_menu_button3.config(command=quit)
 
         # --Menu (Help)
         menu_bar = Menu(self.__root)
@@ -85,6 +88,12 @@ class DungeonAdventure():
 
         self.__root.config(menu=menu_bar)
 
+    def __delete_start_menu(self):
+        self.__start_canvas.pack_forget()
+        self.__st_menu_button1.pack_forget()
+        self.__st_menu_button2.pack_forget()
+        self.__st_menu_button3.pack_forget()
+
     def donothing(self):
         filewin = Toplevel(self.__root)
         button = Button(filewin, text="Help yourself fool!!! \n Read a book or something!!!", font="Verdana 20 bold",
@@ -94,8 +103,8 @@ class DungeonAdventure():
     def input_name(self):
         def user_input_adventurer_name():
             print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
-            messagebox.showinfo("Name info", adv_name.get())
             self.__adventurer = Adventurer(adv_name.get(), self)
+            self.__delete_start_menu()
             self.__start_game(int(diff.get()))
 
         master = tk.Tk()
