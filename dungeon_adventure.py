@@ -28,7 +28,7 @@ class DungeonAdventure():
         canvas1 = tk.Canvas(self.root, width=940, height=675)
         canvas1.pack(expand=tk.YES, fill=tk.BOTH)
 
-        self.title_image = tk.PhotoImage(file="title_screen.png")
+        self.title_image = tk.PhotoImage(file="title.png")
         canvas1.create_image(0, 0, anchor=NW, image=self.title_image)
 
         # --Buttons
