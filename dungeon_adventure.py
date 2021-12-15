@@ -9,14 +9,51 @@ from tkinter import messagebox
 
 class DungeonAdventure():
     def __init__(self):
-        self.title_image = None
-        self.dungeon = None
-        self.adventurer = None
-        self.root = tk.Tk()
-        self.root.title("Dungeon Adventure")
+        self.__dungeon = None
+        self.__adventurer = None
+        self.__diff = None
+        self.__root = tk.Tk()
+        self.__root.title("Dungeon Adventure")
+
+        self.__start_canvas = None
+        self.__st_menu_button1 = None
+        self.__st_menu_button2 = None
+        self.__st_menu_button3 = None
+
+        self.__input_name = None
+        self.__in_menu_button1 = None
+        self.__in_menu_button2 = None
+
+
+
+
+        self.__name_input_window = None
+
         self.start_menu()
 
-    def start_game(self):
+    def __start_game(self, diff):
+        self.__dungeon = Dungeon(diff, self, self.__adventurer)
+
+        text_area = tk.Text(self.__root, width=50, height=50)
+        text_area.pack(anchor=NW)
+
+        button_n = tk.Button(text="Move North")
+        button_n.config(command=self.__dungeon.move_north)
+        button_n.pack()
+
+        self.hypothetical_game_loop(text_area)
+
+    def hypothetical_game_loop(self, text_area : tk.Text):
+
+        # display dungeon using .display() method
+        text_area.insert("1.0", self.__dungeon.display(3))
+
+        # wait for player input
+
+        # if potion use, use potion
+
+        # if move, attempt move
+        self.__root.after(40, self.hypothetical_game_loop(text_area))
         pass
 
     def announce(self, message):
@@ -26,55 +63,73 @@ class DungeonAdventure():
         pass
 
     def start_menu(self):
-        # self.root.geometry("940x675")
-        # canvas2 = tk.Canvas(self.root, bg="gray16", height=1000, width=1000)
-        # self.title_image = tk.PhotoImage(file="title_screen.png")
-        # background_label = Label(self.root, image=self.title_image, )
-        # background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        #
-        # canvas2.pack(expand=NO, fill=NONE)
+        """
+        Creates and displays the start menu.
+        """
 
-        canvas2 = tk.Canvas(self.root, width=940, height=675)
-        canvas2.pack(expand=tk.YES, fill=tk.BOTH)
+        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
+        self.__start_canvas.pack(expand=tk.YES, fill=tk.BOTH)
 
-        self.title_image = tk.PhotoImage(file="title.png")
-        canvas2.create_image(0, 0, anchor=NW, image=self.title_image)
+        self.title_image = tk.PhotoImage(file="title_screen.png")
+        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.title_image)
 
         # --Buttons
-        button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
-        canvas2.create_window(650, 500, window=button1)
-        button1.config(command=self.input_name)
+        self.__st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
+        self.__start_canvas.create_window(220, 580, window=self.__st_menu_button1)
+        self.__st_menu_button1.config(command=self.input_name)
 
-        button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
-        canvas2.create_window(650, 530, window=button2)
-        button2.config(command=self.display_instructions)
+        self.__st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
+        self.__start_canvas.create_window(480, 580, window=self.__st_menu_button2)
+        self.__st_menu_button2.config(command=self.display_instructions)
 
-        button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
-        canvas2.create_window(650, 560, window=button3)
-        button3.config(command=quit)
+        self.__st_menu_button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
+        self.__start_canvas.create_window(740, 580, window=self.__st_menu_button3)
+        self.__st_menu_button3.config(command=quit)
 
         # --Menu (Help)
-        menu_bar = Menu(self.root)
+        menu_bar = Menu(self.__root)
 
         help_menu = Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="Help request", command=self.donothing)
         menu_bar.add_cascade(label="Help", menu=help_menu)
 
-        self.root.config(menu=menu_bar)
+        self.__root.config(menu=menu_bar)
+
+    def __delete_start_menu(self):
+        self.__start_canvas.pack_forget()
+        self.__st_menu_button1.pack_forget()
+        self.__st_menu_button2.pack_forget()
+        self.__st_menu_button3.pack_forget()
+
+    def __delete_input_name(self):
+        self.__input_name.pack_forget()
+        self.__in_menu_button1.pack_forget()
+        self.__in_menu_button2.pack_forget()
 
     def donothing(self):
-        filewin = Toplevel(self.root)
+        filewin = Toplevel(self.__root)
         button = Button(filewin, text="Help yourself fool!!! \n Read a book or something!!!", font="Verdana 20 bold",
                         width=40)
         button.pack()
 
     def input_name(self):
+        master = tk.Tk()
+
         def user_input_adventurer_name():
             print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
-            messagebox.showinfo("Name info", adv_name.get())
-            self.adventurer = Adventurer(adv_name.get(), self)
+            self.__adventurer = Adventurer(adv_name.get(), self)
+            self.__delete_start_menu()
+            self.__start_game(int(diff.get()))
+            # master.after(5000, master.destroy)
 
-        master = tk.Tk()
+
+            # self.__delete_input_name()
+            # master.destroy()
+
+            # self.__delete_input_name()
+
+
+        # master = tk.Tk()
         tk.Label(master,
                  text="First Name").grid(row=0)
         tk.Label(master,
@@ -102,16 +157,20 @@ class DungeonAdventure():
                                                sticky=tk.W,
                                                pady=4)
         tk.Button(master,
-                  text='Input', command=user_input_adventurer_name).grid(row=4,
-                                                                         column=0,
-                                                                         columnspan=2,
-                                                                         sticky=tk.W,
-                                                                         pady=4)
+                  text='Accept', command=user_input_adventurer_name).grid(row=4,
+                                                                          column=0,
+                                                                          columnspan=2,
+                                                                          sticky=tk.W,
+                                                                          pady=4)
 
-        tk.mainloop()
+        # if user_input_adventurer_name is True:
+        #     master.destroy()
+        # tk.mainloop()
+
+        master.after(10000, master.destroy)
 
     def display_instructions(self):
-        instructions = Toplevel(self.root)
+        instructions = Toplevel(self.__root)
         instructions.title("Instructions")
 
         button = Button(instructions, font="Verdana 19 bold", text="""Welcome!!! You are about to brave our maze inorder to 
@@ -124,4 +183,4 @@ class DungeonAdventure():
         button.pack()
 
     def start_loop(self):
-        self.root.mainloop()
+        self.__root.mainloop()
