@@ -41,9 +41,9 @@ class Room_Test(unittest.TestCase):
         room = Room("0", "n")
         try:
             room.set_pillar("Y")
-            self.assertEqual(True, False, "exception not thrown for pillar Y which isn't in pillars")
-        except ValueError as value_error:
             self.assertEqual(True, True)
+        except ValueError as value_error:
+            self.assertEqual(True, False, "exception not thrown for pillar Y which isn't in pillars")
 
 
     def test_set_as_exit(self):
@@ -58,3 +58,6 @@ class Room_Test(unittest.TestCase):
         self.assertTrue(room_1.get_player())
         room_1.leave()
         self.assertFalse(room_1.get_player())
+
+if __name__ == "__main__":
+    unittest.main()
