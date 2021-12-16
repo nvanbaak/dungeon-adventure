@@ -1,7 +1,6 @@
 import tkinter as tk
 from adventurer import Adventurer
 from dungeon import Dungeon
-# from PIL import ImageTk, Image
 
 from tkinter import *
 from tkinter import messagebox
@@ -64,7 +63,7 @@ class DungeonAdventure():
         self.__text_area.config(state="disabled")
 
     def announce(self, message):
-        pass
+        print(message)
 
     def end_game(self):
         pass

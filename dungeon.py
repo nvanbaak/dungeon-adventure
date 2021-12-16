@@ -100,7 +100,7 @@ class Dungeon():
             self.generate()
             return
 
-        print(self.display(3))
+        # print(self.display(3))
         # print(self)
 
     def __validate_maze(self):
