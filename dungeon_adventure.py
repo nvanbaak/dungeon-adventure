@@ -49,6 +49,10 @@ class DungeonAdventure():
         self.__root.bind("<h>", self.use_health_potion)
         self.__root.bind("<j>", self.use_vision_potion)
 
+        self.__root.bind("<7>", self.cheat_codes)
+        self.__root.bind("<8>", self.cheat_codes)
+        self.__root.bind("<9>", self.cheat_codes)
+
     def move_player(self, keypress):
         """
         Passes keyboard input to dungeon to move the player
@@ -71,12 +75,32 @@ class DungeonAdventure():
         self.__adventurer.use_vision_potion()
         self.draw_map()
 
+    def cheat_codes(self, keypress):
+        """
+        Number keys are cheats
+        """
+        key = keypress.char
+        if key == "7":
+            self.draw_whole_map()
+        elif key == "8":
+            self.__adventurer.add_vision_potion()
+        elif key == "9":
+            self.__adventurer.add_health_potion()
 
     def draw_map(self):
         self.__text_area.config(state="normal")
         self.__text_area.delete("1.0", "end")
         self.__text_area.insert("1.0", self.__dungeon.display(3, 
                 self.__adventurer.get_vision_range()))
+        self.__text_area.config(state="disabled")
+
+    def draw_whole_map(self):
+        """
+        Prints the entire dungeon to the game window
+        """
+        self.__text_area.config(state="normal")
+        self.__text_area.delete("1.0", "end")
+        self.__text_area.insert("1.0", self.__dungeon.__str__())
         self.__text_area.config(state="disabled")
 
     def announce(self, message):

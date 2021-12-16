@@ -339,12 +339,13 @@ class Dungeon():
             (pl_x, pl_y) = self.__pl_location.get_location()
             for row in range(pl_x-potion_range, pl_x+potion_range):
                 for col in range(pl_y-potion_range, pl_y-potion_range):
+                    print(f"Magic visibility for room ({row}, {col})")
                     try:
                         if col >= self.__size:
                             col -= self.__size
                         if row >= self.__size:
                             row -= self.__size
-                        target_room = self.__room_array[col][row]
+                        target_room : Room = self.__room_array[col][row]
                     except IndexError:
                         print("display() attempted to access room out of bounds!")
                     if target_room:

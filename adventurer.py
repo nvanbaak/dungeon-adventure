@@ -96,6 +96,8 @@ class Adventurer:
     def decay_vision(self):
         if self.__vision > 0:
             self.__vision -= 1
+            self.__game.announce("The effects of your vision potion fade a little.")
+
 
     def take_damage(self, damage, source):
 
