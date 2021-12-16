@@ -1,6 +1,4 @@
 import random
-from mock_game import MockGame as Game
-
 
 class Adventurer:
     """
@@ -8,7 +6,7 @@ class Adventurer:
     """
     def __init__(self, name, game):
         self.__name = name
-        self.__game : Game = game
+        self.__game = game
         self.__pillars = []
         self.__vision_p = 0
         self.__health_p = 0
@@ -30,6 +28,7 @@ class Adventurer:
             raise Exception("Attempted to collect pillar <", pillar, "> a second time.")
         if pillar == "A" or pillar == "E" or pillar == "I" or pillar == "P":
             self.__pillars.append(pillar)
+            self.__game.announce(f"Earned a pillar!  You now have {self.__pillars}")
 
         else:
             raise Exception("The pillar value <" + pillar + "> is neither 'A', 'E', 'I', or 'P'!!!")
