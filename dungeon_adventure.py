@@ -29,14 +29,14 @@ class DungeonAdventure():
         self.start_menu()
 
     def __start_game(self):
-        self.__adventurer = Adventurer("keyboard_test", self.__diff)
+        self.__adventurer = Adventurer("Test Adventurer", self)
         self.__delete_start_menu()
 
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
         self.__dungeon.generate()
 
-        self.__text_area = tk.Text(self.__root, width=50, height=50, font=())
-        self.__text_area.pack(anchor=NW)
+        self.__text_area = tk.Text(self.__root, width=50, height=50)
+        self.__text_area.pack(anchor=CENTER)
 
         self.__text_area.insert("1.0", self.__dungeon.display(3))
         self.__text_area.config(state="disabled")
