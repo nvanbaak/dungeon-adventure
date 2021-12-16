@@ -11,7 +11,7 @@ class DungeonAdventure():
     def __init__(self):
         self.__dungeon = None
         self.__adventurer = None
-        self.__diff = None
+        self.__diff = 1
         self.__root = tk.Tk()
         self.__root.title("Dungeon Adventure")
 
@@ -24,37 +24,44 @@ class DungeonAdventure():
         self.__in_menu_button1 = None
         self.__in_menu_button2 = None
 
-
-
-
-        self.__name_input_window = None
+        self.__text_area = None
 
         self.start_menu()
 
-    def __start_game(self, diff):
-        self.__dungeon = Dungeon(diff, self, self.__adventurer)
+    def __start_game(self):
+        self.__adventurer = Adventurer("keyboard_test", self.__diff)
+        self.__delete_start_menu()
 
-        text_area = tk.Text(self.__root, width=50, height=50)
-        text_area.pack(anchor=NW)
+        self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
+        self.__dungeon.generate()
 
-        button_n = tk.Button(text="Move North")
-        button_n.config(command=self.__dungeon.move_north)
-        button_n.pack()
+        self.__text_area = tk.Text(self.__root, width=50, height=50, font=())
+        self.__text_area.pack(anchor=NW)
 
-        self.hypothetical_game_loop(text_area)
+        self.__text_area.insert("1.0", self.__dungeon.display(3))
+        self.__text_area.config(state="disabled")
 
-    def hypothetical_game_loop(self, text_area : tk.Text):
+        self.__text_area.bind("<w>", self.move_player)
+        self.__text_area.bind("<a>", self.move_player)
+        self.__text_area.bind("<s>", self.move_player)
+        self.__text_area.bind("<d>", self.move_player)
 
-        # display dungeon using .display() method
-        text_area.insert("1.0", self.__dungeon.display(3))
+    def move_player(self, keypress):
+        """
+        Passes keyboard input to dungeon to move the player
+        """
+        dir_dict = {
+            "w" : "n",
+            "a" : "w",
+            "s" : "s",
+            "d" : "e"
+        }
+        self.__dungeon.move_player(self.__adventurer, dir_dict[keypress.char])
 
-        # wait for player input
-
-        # if potion use, use potion
-
-        # if move, attempt move
-        self.__root.after(40, self.hypothetical_game_loop(text_area))
-        pass
+        self.__text_area.config(state="normal")
+        self.__text_area.delete("1.0", "end")
+        self.__text_area.insert("1.0", self.__dungeon.display(3))
+        self.__text_area.config(state="disabled")
 
     def announce(self, message):
         pass
@@ -70,13 +77,13 @@ class DungeonAdventure():
         self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
         self.__start_canvas.pack(expand=tk.YES, fill=tk.BOTH)
 
-        self.title_image = tk.PhotoImage(file="title_screen.png")
+        self.title_image = tk.PhotoImage(file="title.png")
         self.__start_canvas.create_image(0, 0, anchor=NW, image=self.title_image)
 
         # --Buttons
         self.__st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
         self.__start_canvas.create_window(220, 580, window=self.__st_menu_button1)
-        self.__st_menu_button1.config(command=self.input_name)
+        self.__st_menu_button1.config(command=self.__start_game)
 
         self.__st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
         self.__start_canvas.create_window(480, 580, window=self.__st_menu_button2)
@@ -100,11 +107,6 @@ class DungeonAdventure():
         self.__st_menu_button1.pack_forget()
         self.__st_menu_button2.pack_forget()
         self.__st_menu_button3.pack_forget()
-
-    def __delete_input_name(self):
-        self.__input_name.pack_forget()
-        self.__in_menu_button1.pack_forget()
-        self.__in_menu_button2.pack_forget()
 
     def donothing(self):
         filewin = Toplevel(self.__root)
