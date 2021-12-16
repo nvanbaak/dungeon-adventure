@@ -41,10 +41,13 @@ class DungeonAdventure():
         self.__text_area.insert("1.0", self.__dungeon.display(3))
         self.__text_area.config(state="disabled")
 
-        self.__text_area.bind("<w>", self.move_player)
-        self.__text_area.bind("<a>", self.move_player)
-        self.__text_area.bind("<s>", self.move_player)
-        self.__text_area.bind("<d>", self.move_player)
+        self.__root.bind("<w>", self.move_player)
+        self.__root.bind("<a>", self.move_player)
+        self.__root.bind("<s>", self.move_player)
+        self.__root.bind("<d>", self.move_player)
+
+        self.__root.bind("<h>", self.use_health_potion)
+        self.__root.bind("<j>", self.use_vision_potion)
 
     def move_player(self, keypress):
         """
@@ -62,6 +65,12 @@ class DungeonAdventure():
         self.__text_area.delete("1.0", "end")
         self.__text_area.insert("1.0", self.__dungeon.display(3))
         self.__text_area.config(state="disabled")
+
+    def use_health_potion(self, keypress):
+        self.__adventurer.use_health_potion()
+
+    def use_vision_potion(self, keypress):
+        self.__adventurer.use_vision_potion()
 
     def announce(self, message):
         print(message)
