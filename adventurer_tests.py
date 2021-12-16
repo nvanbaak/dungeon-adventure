@@ -17,10 +17,12 @@ class Adventurer_Test(unittest.TestCase):
         except:
             self.assertEqual(True, True)
 
-    def test_Earn_Pillar(self, pillar):
-        pillars = Adventurer("Jack", Game())
-        pillar = ["A", "E", "I", "P"]
-        self.assertEqual(pillars.earn_pillar(pillar), ["A", "E", "I", "P"])
+    def test_Earn_Pillar(self):
+        adv = Adventurer("Jack", Game())
+
+        for pillar in ["A", "E", "I", "P"]:
+            adv.earn_pillar(pillar)
+            self.assertTrue(adv.is_pillar_in_inventory(pillar))
 
     def test_Add_Health_Potion(self):
         adventurer_HP = Adventurer("Jack", Game())
@@ -56,7 +58,7 @@ class Adventurer_Test(unittest.TestCase):
 
     def test_Take_Damage(self):
         my_adventurer = Adventurer("Jack", Game())
-        self.assertEqual(my_adventurer.take_damage(-1000, source=Adventurer), None)
+        self.assertEqual(my_adventurer.take_damage(1000, source="unit tests"), None)
 
     def test_Exit_Fail(self):
         my_adventurer = Adventurer("Jack", Game())

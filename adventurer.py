@@ -105,3 +105,7 @@ class Adventurer:
         return "\nName: " + self.__name + " HP: " + str(self.__hp) + " Number of health potions: " + \
                str(self.__health_p) + " Number of vision potions: " + str(self.__vision_p) + " Pillars Found: " + \
                str(self.__pillars)
+
+    # debug code, only used for unit tests
+    def is_pillar_in_inventory(self, pillar):
+        return pillar in self.__pillars
