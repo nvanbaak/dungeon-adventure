@@ -337,19 +337,19 @@ class Dungeon():
         # check if vision potion active
         if potion_range > 0:
             (pl_x, pl_y) = self.__pl_location.get_location()
-            for row in range(pl_x-potion_range, pl_x+potion_range):
-                for col in range(pl_y-potion_range, pl_y-potion_range):
-                    print(f"Magic visibility for room ({row}, {col})")
+            for row in range(pl_x-potion_range, pl_x+potion_range+1):
+                for col in range(pl_y-potion_range, pl_y+potion_range+1):
                     try:
                         if col >= self.__size:
                             col -= self.__size
                         if row >= self.__size:
                             row -= self.__size
                         target_room : Room = self.__room_array[col][row]
+                        if target_room:
+                            visible_rooms[target_room.get_id()] = True
                     except IndexError:
                         print("display() attempted to access room out of bounds!")
-                    if target_room:
-                        visible_rooms[target_room.get_id()] = True
+                    
 
         # Then we follow a similar process to __str__
         output_str = ""
