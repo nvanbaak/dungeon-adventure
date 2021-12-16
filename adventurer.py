@@ -1,6 +1,4 @@
 import random
-from mock_game import MockGame as Game
-
 
 class Adventurer:
     """
@@ -8,7 +6,7 @@ class Adventurer:
     """
     def __init__(self, name, game):
         self.__name = name
-        self.__game : Game = game
+        self.__game = game
         self.__pillars = []
         self.__vision_p = 0
         self.__health_p = 0
@@ -30,6 +28,7 @@ class Adventurer:
             raise Exception("Attempted to collect pillar <", pillar, "> a second time.")
         if pillar == "A" or pillar == "E" or pillar == "I" or pillar == "P":
             self.__pillars.append(pillar)
+            self.__game.announce(f"Earned a pillar!  You now have {self.__pillars}")
 
         else:
             raise Exception("The pillar value <" + pillar + "> is neither 'A', 'E', 'I', or 'P'!!!")
@@ -106,84 +105,6 @@ class Adventurer:
                str(self.__health_p) + " Number of vision potions: " + str(self.__vision_p) + " Pillars Found: " + \
                str(self.__pillars)
 
-
-# adventurer = Adventurer("Jack", Game())
-
-# print("\n------------------------print adventurer status ('empty', try using either potion)-------------------------")
-# adventurer.use_health_potion()
-# adventurer.use_vision_potion()
-
-# print(adventurer)
-
-# print("\n------------------------print adventurer status (+1 potion)-------------------------")
-# adventurer.add_health_potion()
-# print(adventurer)
-
-# print("\n------------------------print adventurer status (take damage 1st)-------------------------")
-# adventurer.take_damage(1, "angry gnat")
-# print(adventurer)
-
-# print("\n------------------------print adventurer status (take 1st health potion)-------------------------")
-# adventurer.use_health_potion()
-# print(adventurer)
-
-
-# print("\n------------------------print adventurer status (Add two of each potion)-------------------------")
-# adventurer.add_health_potion()
-# adventurer.add_health_potion()
-# adventurer.add_vision_potion()
-# adventurer.add_vision_potion()
-
-# print(adventurer)
-
-
-# print("\n------------------------print adventurer status (Add 'A' to the Pillars + adding an extra 'A' and a false 'z')"
-#       "-------------------------")
-# adventurer.earn_pillar("A")
-# try:
-#     adventurer.earn_pillar("A")
-#     print("should have failed.")
-# except:
-#     pass
-
-# try:
-#     adventurer.earn_pillar("z")
-#     print("should have failed.")
-# except:
-#     pass
-
-
-# print(adventurer)
-
-
-
-# print("\n------------------------print adventurer status (TIME TO DIE!!!)-------------------------")
-# print(adventurer)
-# adventurer.take_damage(20, "legendary pit")
-# adventurer.take_damage(20, "legendary pit")
-# adventurer.take_damage(20, "legendary pit")
-# adventurer.take_damage(20, "legendary pit")
-# adventurer.take_damage(20, "legendary pit")
-# adventurer.take_damage(2000, "extra legendary pit")
-# print(adventurer)
-
-
-
-# print("\n------------------------print adventurer exit (doesn't have all Pillars of OO)-------------------------\n")
-# adventurer.exit()
-
-# print(adventurer)
-
-
-
-# print("\n------------------------print adventurer status (Add 'E', 'I', 'P')-------------------------")
-# adventurer.earn_pillar("P")
-# adventurer.earn_pillar("I")
-# adventurer.earn_pillar("E")
-
-# print(adventurer)
-
-# print("\n------------------------print adventurer exit (has all Pillars of OO)-------------------------\n")
-# adventurer.exit()
-
-
+    # debug code, only used for unit tests
+    def is_pillar_in_inventory(self, pillar):
+        return pillar in self.__pillars

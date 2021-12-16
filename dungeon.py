@@ -8,9 +8,10 @@ class Dungeon():
     """
     An object that manages the Dungeon and the objects inside of it.
     """
-    def __init__(self, diff, game : Game) -> None:
+    def __init__(self, diff, game : Game, adv : Adventurer) -> None:
         self.__diff = diff
         self.__game = game
+        self.__adv = adv
         self.__size = 5 + (2 * diff)
         self.__entrance = None
         self.__pl_location = None
@@ -23,17 +24,16 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
-    def generate(self, adv : Adventurer) -> None:
+    def generate(self) -> None:
         """
         Builds out the dungeon and places objects inside.
         """
         # setup entrance and surrounding rooms
-        rooms_to_build = self.__create_entrance(adv)
+        rooms_to_build = self.__create_entrance(self.__adv)
 
         # we have 4 pillars and an exit to place
         pillars = ["E", "I", "A", "P"]
         exit_room = 35 + self.__diff * 5
-
 
         # next, continue adding and linking rooms
         while rooms_to_build:
@@ -90,14 +90,14 @@ class Dungeon():
         if self.__room_count < room_cutoff:
             print("Maze too small!  Regenerating...")
             self.__clear_dungeon()
-            self.generate(adv)
+            self.generate()
             return
 
         # check that all pillars and exit were placed
         if not self.__validate_maze():
             print("Objective placement failed!  Regenerating...")
             self.__clear_dungeon()
-            self.generate(adv)
+            self.generate()
             return
 
         print(self.display(3))
@@ -264,6 +264,7 @@ class Dungeon():
         """
 
         if not (dir == "n" or dir == "w" or dir == "e" or dir == "s"):
+            print(dir)
             raise ValueError("Invalid move command!")
 
         pl_room : Room = self.__pl_location
@@ -327,10 +328,11 @@ class Dungeon():
         for direction in ["n","w","s","e"]:
             next_room : Room = self.__pl_location.get_dir(direction)
             for _ in range(0, vis_range):
-                visible_rooms[next_room.get_id()] = True
-                next_room = next_room.get_dir(direction)
-                if not next_room:
-                    break
+                if next_room:
+                    visible_rooms[next_room.get_id()] = True
+                    next_room = next_room.get_dir(direction)
+                    if not next_room:
+                        break
 
         # Then we follow a similar process to __str__
         output_str = ""
