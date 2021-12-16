@@ -64,7 +64,7 @@ class DungeonAdventure():
         self.__text_area.config(state="disabled")
 
     def announce(self, message):
-        pass
+        print(message)
 
     def end_game(self):
         pass
