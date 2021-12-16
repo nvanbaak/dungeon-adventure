@@ -38,13 +38,20 @@ class DungeonAdventure():
         self.__text_area = tk.Text(self.__root, width=50, height=50)
         self.__text_area.pack(anchor=CENTER)
 
-        self.__text_area.insert("1.0", self.__dungeon.display(3))
+        self.__text_area.insert("1.0", self.__dungeon.display(3, 0))
         self.__text_area.config(state="disabled")
 
-        self.__text_area.bind("<w>", self.move_player)
-        self.__text_area.bind("<a>", self.move_player)
-        self.__text_area.bind("<s>", self.move_player)
-        self.__text_area.bind("<d>", self.move_player)
+        self.__root.bind("<w>", self.move_player)
+        self.__root.bind("<a>", self.move_player)
+        self.__root.bind("<s>", self.move_player)
+        self.__root.bind("<d>", self.move_player)
+
+        self.__root.bind("<h>", self.use_health_potion)
+        self.__root.bind("<j>", self.use_vision_potion)
+
+        self.__root.bind("<7>", self.cheat_codes)
+        self.__root.bind("<8>", self.cheat_codes)
+        self.__root.bind("<9>", self.cheat_codes)
 
     def move_player(self, keypress):
         """
@@ -57,14 +64,47 @@ class DungeonAdventure():
             "d" : "e"
         }
         self.__dungeon.move_player(self.__adventurer, dir_dict[keypress.char])
+        self.__adventurer.decay_vision()
 
+        self.draw_map()
+
+    def use_health_potion(self, keypress):
+        self.__adventurer.use_health_potion()
+
+    def use_vision_potion(self, keypress):
+        self.__adventurer.use_vision_potion()
+        self.draw_map()
+
+    def cheat_codes(self, keypress):
+        """
+        Number keys are cheats
+        """
+        key = keypress.char
+        if key == "7":
+            self.draw_whole_map()
+        elif key == "8":
+            self.__adventurer.add_vision_potion()
+        elif key == "9":
+            self.__adventurer.add_health_potion()
+
+    def draw_map(self):
         self.__text_area.config(state="normal")
         self.__text_area.delete("1.0", "end")
-        self.__text_area.insert("1.0", self.__dungeon.display(3))
+        self.__text_area.insert("1.0", self.__dungeon.display(3, 
+                self.__adventurer.get_vision_range()))
+        self.__text_area.config(state="disabled")
+
+    def draw_whole_map(self):
+        """
+        Prints the entire dungeon to the game window
+        """
+        self.__text_area.config(state="normal")
+        self.__text_area.delete("1.0", "end")
+        self.__text_area.insert("1.0", self.__dungeon.__str__())
         self.__text_area.config(state="disabled")
 
     def announce(self, message):
-        pass
+        print(message)
 
     def end_game(self):
         pass

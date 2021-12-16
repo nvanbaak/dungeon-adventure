@@ -14,6 +14,8 @@ class Adventurer:
         self.__hp = random.randrange(75, 100)
         self.__max_hp = self.__hp
 
+        self.__vision = 0
+
     def get_name(self):
         """
         Getter for name property.
@@ -37,8 +39,9 @@ class Adventurer:
         """
         Increments health potion count by 1.
         """
-
         self.__health_p += 1
+        self.__game.announce(
+                f"You pick up a health potion.  You now have {self.__health_p} of them.")
         return self.__health_p
 
     def use_health_potion(self):
@@ -52,24 +55,24 @@ class Adventurer:
         if self.__health_p > 0:
             self.__health_p -= 1
 
-
             self.__hp += heal
             if self.__hp >= self.__max_hp:
                 self.__hp = self.__max_hp
 
-            self.__game.announce("Amount healed is: " + str(heal))
+            self.__game.announce(f"Used a health potion! It heals {heal} HP, bringing you to {self.__hp}.")
             return True
 
         elif self.__health_p <= 0:
-            self.__game.announce("You have no Health Potions!!!")
+            self.__game.announce("You reach for a health potion and find only disappointment.")
             return False
 
     def add_vision_potion(self):
         """
         Increments vision potion count by 1.
         """
-
         self.__vision_p += 1
+        self.__game.announce(
+                f"You pick up a vision potion.  You now have {self.__vision_p} of them.")
         return self.__vision_p
 
     def use_vision_potion(self):
@@ -79,12 +82,22 @@ class Adventurer:
         """
         if self.__vision_p > 0:
             self.__vision_p -= 1
-            self.__game.announce("Vision has increased!")
+            self.__vision += 2
+            self.__game.announce(f"Your vision has temporarily increased to {self.__vision}!")
             return True
 
         else:
-            self.__game.announce("You have no Vision Potions!!!")
+            self.__game.announce("You look for a vision potion but don't see one.")
             return False
+
+    def get_vision_range(self):
+        return self.__vision
+
+    def decay_vision(self):
+        if self.__vision > 0:
+            self.__vision -= 1
+            self.__game.announce("The effects of your vision potion fade a little.")
+
 
     def take_damage(self, damage, source):
 

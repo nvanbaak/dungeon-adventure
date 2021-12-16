@@ -12,7 +12,7 @@ class Dungeon():
         self.__diff = diff
         self.__game = game
         self.__adv = adv
-        self.__size = 5 + (2 * diff)
+        self.__size = 7 + (3 * diff)
         self.__entrance = None
         self.__pl_location = None
         self.__room_count = 0
@@ -100,7 +100,7 @@ class Dungeon():
             self.generate()
             return
 
-        print(self.display(3))
+        # print(self.display(3))
         # print(self)
 
     def __validate_maze(self):
@@ -314,7 +314,7 @@ class Dungeon():
 
         return output_str
 
-    def display(self, vis_range) -> str:
+    def display(self, vis_range, potion_range) -> str:
         """
         Returns a string representing only the parts of the dungeon
         the player can see.
@@ -333,6 +333,23 @@ class Dungeon():
                     next_room = next_room.get_dir(direction)
                     if not next_room:
                         break
+
+        # check if vision potion active
+        if potion_range > 0:
+            (pl_x, pl_y) = self.__pl_location.get_location()
+            for row in range(pl_x-potion_range, pl_x+potion_range+1):
+                for col in range(pl_y-potion_range, pl_y+potion_range+1):
+                    try:
+                        if col >= self.__size:
+                            col -= self.__size
+                        if row >= self.__size:
+                            row -= self.__size
+                        target_room : Room = self.__room_array[col][row]
+                        if target_room:
+                            visible_rooms[target_room.get_id()] = True
+                    except IndexError:
+                        print("display() attempted to access room out of bounds!")
+                    
 
         # Then we follow a similar process to __str__
         output_str = ""
