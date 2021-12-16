@@ -178,7 +178,7 @@ class DungeonTest(unittest.TestCase):
         my_dungeon.debug_set_room_array(room_array)
 
         vision_range = 3
-        display_str = my_dungeon.display(vision_range)
+        display_str = my_dungeon.display(vision_range, 0)
 
         self.assertEqual(display_str.count("A"), 0)
         self.assertEqual(display_str.count("P"), 1)
