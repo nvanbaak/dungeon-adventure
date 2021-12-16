@@ -19,14 +19,14 @@ class Room_Test(unittest.TestCase):
     def test_is_exit(self):
         pass
     def test_set_pillar_A(self):
-        """Simple test to set pillar to 2A"""
-        room = Room()
+        """Simple test to set pillar to A"""
+        room = Room(0, 1)
         room.set_pillar("A")
-        self.assertEqual("A", room.pillar(), "pillar not set to A")
+        self.assertEqual("A", room.set_pillar("A"), "pillar not set to A")
 
     def test_set_pillar_Y(self):
         """Set pillar to Y, which is which is not in pillars so a ValueError should be raised"""
-        room = Room()
+        room = Room("0", "n")
         try:
             room.set_pillar("Y")
             self.assertEqual(True, False, "exception not thrown for pillar Y which isn't in pillars")
@@ -34,7 +34,7 @@ class Room_Test(unittest.TestCase):
             self.assertEqual(True, True)
 
     def test_get_pillar(self):
-        pass
+
     def test_clear_room(self):
         pass
     def test_set_as_exit(self):
