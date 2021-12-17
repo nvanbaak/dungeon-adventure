@@ -53,6 +53,14 @@ class DungeonAdventure:
             self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 3:
+            self.__title_image = tk.PhotoImage(file="assets/controls.png")
+            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.intro_slide += 1
+        elif self.intro_slide == 4:
+            self.__title_image = tk.PhotoImage(file="assets/objectives.png")
+            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.intro_slide += 1
+        elif self.intro_slide == 5:
             self.__start_canvas.destroy()
             self.__root.unbind("<Button-1>")
             self.start_menu()
