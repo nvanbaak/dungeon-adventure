@@ -98,6 +98,7 @@ class Room:
         self.__vision_p = False
 
     def set_as_exit(self):
+        self.clear_room()
         self.__exit = True
 
     def leave(self):
@@ -109,6 +110,8 @@ class Room:
     def enter(self, adv):
         if self.__exit:
             adv.exit()
+            self.__has_player = True
+            return
         if self.__pillar:
             adv.earn_pillar(self.__pillar)
             self.__pillar = False
