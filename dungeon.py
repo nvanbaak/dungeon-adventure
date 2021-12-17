@@ -43,14 +43,13 @@ class Dungeon():
             (x, y) = new_room.get_location()
 
             # use id to place exit and pillars
-            if pillars and new_room.get_id() > 24:
+            if new_room.get_id() == exit_room:
+                new_room.set_as_exit()
+            elif pillars and new_room.get_id() > 24:
                 pillar_threshold = 0.2
                 if random.random() < pillar_threshold:
                     new_room.clear_room()
                     new_room.set_pillar(pillars.pop())
-
-            if new_room.get_id() == exit_room:
-                new_room.set_as_exit()
 
             # populate the dungeon in each direction
             target_location = {
@@ -90,14 +89,14 @@ class Dungeon():
         # check that sufficient rooms were generated
         room_cutoff = self.__size * self.__size * .85
         if self.__room_count < room_cutoff:
-            print("Maze too small!  Regenerating...")
+            # print("Maze too small!  Regenerating...")
             self.__clear_dungeon()
             self.generate()
             return
 
         # check that all pillars and exit were placed
         if not self.__validate_maze():
-            print("Objective placement failed!  Regenerating...")
+            # print("Objective placement failed!  Regenerating...")
             self.__clear_dungeon()
             self.generate()
             return
@@ -146,10 +145,10 @@ class Dungeon():
                 target_room : Room = this_room.get_dir(dir)
                 if target_room:
                     target_id = target_room.get_id()
-                    if this_id < target_id: # ensures we're moving outward
+                    if this_id < target_id: # prevents backtracking
                         rooms_to_check.append(target_room)
 
-        # check flags
+        # check flags now that loop is done
         for pillar in pillar_flags:
             if not pillar_flags[pillar]:
                 return False
@@ -266,7 +265,6 @@ class Dungeon():
         """
 
         if not (dir == "n" or dir == "w" or dir == "e" or dir == "s"):
-            print(dir)
             raise ValueError("Invalid move command!")
 
         pl_room : Room = self.__pl_location
@@ -305,9 +303,9 @@ class Dungeon():
 
             for room in row:
                 if room is None:
-                    line1 += "###"
-                    line2 += "###"
-                    line3 += "###"
+                    line1 += "///"
+                    line2 += "///"
+                    line3 += "///"
                 else:
                     room = room.__str__().split("\n")
                     line1 += str(room[0])
@@ -409,3 +407,6 @@ class Dungeon():
 
     def debug_get_room_count(self):
         return self.__room_count
+
+    def debug_clear_dungeon(self):
+        self.__clear_dungeon()
