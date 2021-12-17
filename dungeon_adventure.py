@@ -257,15 +257,26 @@ class DungeonAdventure:
             self.announce("Victory is yours!\nYou have taken the four pillars of object-oriented progamming!")
             self.announce("Without them, the dungeon crumbles behind you.  Whoops!")
 
+        self.announce("Press Enter to return to menu.\n")
+        self.__root.bind("<Enter>", self.return_to_menu)
+
+    def return_to_menu(self, keypress):
+        self.__root.unbind("<Enter>")
+        self.__game_over = False
+        self.start_menu()
+
     def start_menu(self):
         """
         Creates and displays the start menu.
         """
-        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
-        self.__start_canvas.pack(fill=tk.BOTH)
+        if not self.__start_canvas:
+            self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
+            self.__start_canvas.pack(fill=tk.BOTH)
 
-        self.__title_image = tk.PhotoImage(file="assets/title.png")
-        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__title_image = tk.PhotoImage(file="assets/title.png")
+            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+        else:
+            self.__reset_start_canvas("assets/title.png")
 
         # --Buttons
         st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
@@ -312,7 +323,8 @@ class DungeonAdventure:
         7 = See the whole map (note, this ends as soon as you move) 
         8 = Increases your health & vision potion count by 50!!! 
         9 = Gives the adventurer all four pillars of OO
-        0 = developers hate the player, - 1000 HP. Your Dead""", font="Verdana 15 bold",
+        0 = developers hate the player, - 1000 HP. Your Dead
+        p = Reset the map""", font="Verdana 15 bold",
                         width=90)
         button.pack()
 
