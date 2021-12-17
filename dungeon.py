@@ -305,9 +305,9 @@ class Dungeon():
 
             for room in row:
                 if room is None:
-                    line1 += "###"
-                    line2 += "###"
-                    line3 += "###"
+                    line1 += "///"
+                    line2 += "///"
+                    line3 += "///"
                 else:
                     room = room.__str__().split("\n")
                     line1 += str(room[0])

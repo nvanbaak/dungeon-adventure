@@ -58,7 +58,7 @@ class Room:
         else:
             item = " "
 
-        return f"*{north}*\n{west}{item}{east}\n*{south}*"
+        return f"+{north}+\n{west}{item}{east}\n+{south}+"
 
     def get_player(self):
         return self.__has_player

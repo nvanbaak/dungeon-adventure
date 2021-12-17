@@ -1,11 +1,10 @@
 import tkinter as tk
 from adventurer import Adventurer
 from dungeon import Dungeon
-import PIL
-from PIL import ImageTk, Image
+# import PIL
+# from PIL import ImageTk, Image
 
 from tkinter import *
-from tkinter import messagebox
 
 import re
 
@@ -39,7 +38,6 @@ class DungeonAdventure:
         self.__root.bind("<Button-1>", self.advance_intro)
 
         self.advance_intro(None)
-
 
     def advance_intro(self, keypress):
         if self.intro_slide == 0:
