@@ -289,6 +289,9 @@ class Dungeon():
         else:
             self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
 
+    def get_size(self):
+        return self.__size
+
     def __str__(self) -> str:
         """
         Returns a string displaying the dungeon's contents.
@@ -404,9 +407,6 @@ class Dungeon():
 
     def debug_get_difficulty(self):
         return self.__diff
-
-    def debug_get_size(self):
-        return self.__size
 
     def debug_get_room_count(self):
         return self.__room_count

@@ -16,6 +16,9 @@ class Adventurer:
 
         self.__vision = 0
 
+    def is_dead(self):
+        return self.__hp <= 0
+
     def get_name(self):
         """
         Getter for name property.

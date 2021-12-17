@@ -7,6 +7,7 @@ from PIL import ImageTk, Image
 from tkinter import *
 from tkinter import messagebox
 
+import re
 
 class DungeonAdventure:
     def __init__(self):
@@ -21,11 +22,9 @@ class DungeonAdventure:
         self.__st_menu_button2 = None
         self.__st_menu_button3 = None
 
-        self.__input_name = None
-        self.__in_menu_button1 = None
-        self.__in_menu_button2 = None
-
         self.__text_area = None
+
+        self.__game_over = False
 
         self.start_menu()
 
@@ -33,12 +32,12 @@ class DungeonAdventure:
         self.__delete_start_menu()
 
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
+        textbox_size = self.__dungeon.get_size() * 3
 
-        self.__text_area = tk.Text(self.__root, width=100, height=50)
-        self.__text_area.pack(anchor=NW)
+        self.__text_area = tk.Text(self.__root, width=textbox_size, height=textbox_size+2)
+        self.__text_area.pack(anchor=CENTER, padx=140, pady=50)
 
-        self.__text_area.insert("1.0", self.__dungeon.display(3, 0))
-        self.__text_area.config(state="disabled")
+        self.draw_map()
 
         self.__root.bind("<w>", self.move_player)
         self.__root.bind("<a>", self.move_player)
@@ -52,49 +51,64 @@ class DungeonAdventure:
         self.__root.bind("<7>", self.cheat_codes)
         self.__root.bind("<8>", self.cheat_codes)
         self.__root.bind("<9>", self.cheat_codes)
+        self.__root.bind("<0>", self.cheat_codes)
 
     def move_player(self, keypress):
         """
         Passes keyboard input to dungeon to move the player
         """
-        dir_dict = {
-            "w": "n",
-            "a": "w",
-            "s": "s",
-            "d": "e"
-        }
-        self.__dungeon.move_player(self.__adventurer, dir_dict[keypress.char])
-        self.__adventurer.decay_vision()
+        if not self.__game_over:
+            dir_dict = {
+                "w": "n",
+                "a": "w",
+                "s": "s",
+                "d": "e"
+            }
+            self.__dungeon.move_player(self.__adventurer, dir_dict[keypress.char])
+            self.__adventurer.decay_vision()
 
-        self.draw_map()
+            if self.__adventurer.is_dead():
+                self.announce(f"{self.__adventurer.get_name()} has tragically expired.")
+                self.end_game()
+                return
+
+            self.draw_map()
 
     def adventurer_status(self, keypress):
-        self.announce(f"{self.__adventurer.__str__()}")
+        if not self.__game_over:
+            self.announce(f"{self.__adventurer.__str__()}")
 
     def use_health_potion(self, keypress):
-        self.__adventurer.use_health_potion()
+        if not self.__game_over:
+            self.__adventurer.use_health_potion()
 
     def use_vision_potion(self, keypress):
-        self.__adventurer.use_vision_potion()
-        self.draw_map()
+        if not self.__game_over:
+            self.__adventurer.use_vision_potion()
+            self.draw_map()
 
     def cheat_codes(self, keypress):
         """
         Number keys are cheats
         """
-        key = keypress.char
-        if key == "7":
-            self.draw_whole_map()
-        elif key == "8":
-            self.__adventurer.add_vision_potion()
-        elif key == "9":
-            self.__adventurer.add_health_potion()
+        if not self.__game_over:
+            key = keypress.char
+            if key == "7":
+                self.draw_whole_map()
+            elif key == "8":
+                self.__adventurer.add_vision_potion()
+            elif key == "9":
+                self.__adventurer.add_health_potion()
+            elif key == "0":
+                self.__adventurer.take_damage(1000, "the developers")
 
     def draw_map(self):
         self.__text_area.config(state="normal")
         self.__text_area.delete("1.0", "end")
-        self.__text_area.insert("1.0", self.__dungeon.display(3,
-                                                              self.__adventurer.get_vision_range()))
+        self.__text_area.tag_configure("center", justify="center")
+        self.__text_area.insert("1.0", "\n\n" + self.__dungeon.display(3,
+                self.__adventurer.get_vision_range()))
+        self.__text_area.tag_add("center", "1.0", "end")
         self.__text_area.config(state="disabled")
 
     def draw_whole_map(self):
@@ -103,14 +117,19 @@ class DungeonAdventure:
         """
         self.__text_area.config(state="normal")
         self.__text_area.delete("1.0", "end")
-        self.__text_area.insert("1.0", self.__dungeon.__str__())
+        self.__text_area.insert("1.0", "\n\n" + self.__dungeon.__str__(), "center")
         self.__text_area.config(state="disabled")
 
     def announce(self, message):
         print(message)
 
     def end_game(self):
-        pass
+        self.__game_over = True
+        if self.__adventurer.is_dead():
+            self.announce("You lose!  Better luck next time!")
+        else:
+            self.announce("Victory is yours!  You have mastered the four pillars of object-oriented progamming!")
+            self.announce("Without them, the dungeon crumbles behind you.")
 
     def start_menu(self):
         """
@@ -118,10 +137,10 @@ class DungeonAdventure:
         """
 
         self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
-        self.__start_canvas.pack(expand=tk.YES, fill=tk.BOTH)
+        self.__start_canvas.pack(fill=tk.BOTH)
 
-        self.title_image = tk.PhotoImage(file="title.png")
-        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.title_image)
+        title_image = tk.PhotoImage(file="title.png")
+        self.__start_canvas.create_image(0, 0, anchor=NW, image=title_image)
 
         # --Buttons
         self.__st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
@@ -169,15 +188,23 @@ class DungeonAdventure:
 
     def input_name(self):
         def user_input_adventurer_name():
-            try:
-                if diff.get() == "1" or diff.get() == "2" or diff.get() == "3":
-                    print(f"Name: {adv_name.get()}\nDifficulty: {int(diff.get())}")
-                    self.__adventurer = Adventurer(adv_name.get(), self)
-                    self.__delete_start_menu()
-                    self.__start_game()
-                    return True
-            except ValueError:
-                print("Error!!! Please input a values 1, 2 or 3 for difficulty please.")
+
+            numbers_only = re.compile("[0-9]*")
+            attempt_difficulty = diff.get()
+            if numbers_only.fullmatch(attempt_difficulty):
+                self.__diff = int(diff.get())
+            else:
+                print("Use numbers ya goof")
+                return
+
+            if 4 > int(self.__diff) and int(self.__diff) > 0:
+                print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
+                self.__adventurer = Adventurer(adv_name.get(), self)
+                self.__delete_start_menu()
+                self.__start_game()
+                return
+            else:
+                print("Please enter a difficulty between 1 and 3.")
 
         tk.Label(self.__root,
                  text="Player Name").place(x=30, y=610)
