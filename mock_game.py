@@ -4,7 +4,7 @@ class MockGame():
         pass
 
     def announce(self, str):
-        print(str)
+        pass
 
     def end_game(self):
         pass

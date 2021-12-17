@@ -8,20 +8,21 @@ from room import Room
 
 class DungeonTest(unittest.TestCase):
     def test_init(self):
-        my_dungeon = Dungeon(1, Game())
+        my_dungeon = Dungeon(1, Game(), Adv("test", Game()))
+        my_dungeon.debug_clear_dungeon()
 
         self.assertEqual(my_dungeon.debug_get_difficulty(), 1)
-        self.assertEqual(my_dungeon.debug_get_size(), 7)
+        self.assertEqual(my_dungeon.get_size(), 10)
         self.assertEqual(my_dungeon.debug_get_entrance(), None)
         self.assertEqual(my_dungeon.debug_get_player_location(), None)
         self.assertEqual(my_dungeon.debug_get_room_count(), 0)
 
     def test_generate(self):
         my_game = Game()
-        my_dungeon = Dungeon(1, my_game)
         adv = Adv("Test Adventurer", my_game)
+        my_dungeon = Dungeon(1, my_game, adv)
 
-        my_dungeon.generate(adv)
+        my_dungeon.generate()
 
         entrance_room : Room = my_dungeon.debug_get_entrance()
 
@@ -37,10 +38,10 @@ class DungeonTest(unittest.TestCase):
 
     def test_validation(self):
         my_game = Game()
-        my_dungeon = Dungeon(1, my_game)
         adv = Adv("Test Adventurer", my_game)
+        my_dungeon = Dungeon(1, my_game, adv)
 
-        my_dungeon.generate(adv)
+        my_dungeon.generate()
 
         dungeon_str = my_dungeon.__str__()
 
@@ -53,8 +54,8 @@ class DungeonTest(unittest.TestCase):
 
     def make_toy_dungeon(self):
         my_game = Game()
-        my_dungeon = Dungeon(1, my_game)
         adv = Adv("Test Adventurer", my_game)
+        my_dungeon = Dungeon(1, my_game, adv)
 
         # manually create a two-room dungeon
         entrance_room = Room(0, (3,3))
@@ -102,8 +103,8 @@ class DungeonTest(unittest.TestCase):
 
     def test_display(self):
         my_game = Game()
-        my_dungeon = Dungeon(1, my_game)
         adv = Adv("Test Adventurer", my_game)
+        my_dungeon = Dungeon(1, my_game, adv)
 
         # the following code builds a small dungeon that should look like this:
         #
@@ -178,7 +179,7 @@ class DungeonTest(unittest.TestCase):
         my_dungeon.debug_set_room_array(room_array)
 
         vision_range = 3
-        display_str = my_dungeon.display(vision_range)
+        display_str = my_dungeon.display(vision_range, 0)
 
         self.assertEqual(display_str.count("A"), 0)
         self.assertEqual(display_str.count("P"), 1)

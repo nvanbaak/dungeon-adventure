@@ -8,10 +8,11 @@ class Dungeon():
     """
     An object that manages the Dungeon and the objects inside of it.
     """
-    def __init__(self, diff, game : Game) -> None:
+    def __init__(self, diff, game : Game, adv : Adventurer) -> None:
         self.__diff = diff
         self.__game = game
-        self.__size = 5 + (2 * diff)
+        self.__adv = adv
+        self.__size = 7 + (3 * diff)
         self.__entrance = None
         self.__pl_location = None
         self.__room_count = 0
@@ -23,17 +24,32 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
-    def generate(self, adv : Adventurer) -> None:
+        self.generate()
+
+    def generate(self) -> None:
         """
         Builds out the dungeon and places objects inside.
         """
         # setup entrance and surrounding rooms
-        rooms_to_build = self.__create_entrance(adv)
+        rooms_to_build = self.__create_entrance(self.__adv)
+
+        # we have 4 pillars and an exit to place
+        pillars = ["E", "I", "A", "P"]
+        exit_room = 35 + self.__diff * 5
 
         # next, continue adding and linking rooms
         while rooms_to_build:
             new_room : Room = rooms_to_build.pop(0)
             (x, y) = new_room.get_location()
+
+            # use id to place exit and pillars
+            if new_room.get_id() == exit_room:
+                new_room.set_as_exit()
+            elif pillars and new_room.get_id() > 24:
+                pillar_threshold = 0.2
+                if random.random() < pillar_threshold:
+                    new_room.clear_room()
+                    new_room.set_pillar(pillars.pop())
 
             # populate the dungeon in each direction
             target_location = {
@@ -65,20 +81,81 @@ class Dungeon():
                             self.__double_link(new_room, target_room, dir)
 
                 except IndexError: # if we exceed the array bounds, wall
+                    # Note that going to index [-1] causes wraparound
+                    # and will not trigger this exception.  We consider
+                    # this a feature, not a bug.
                     new_room.wall(dir)
 
         # check that sufficient rooms were generated
         room_cutoff = self.__size * self.__size * .85
         if self.__room_count < room_cutoff:
-            print("Maze too small!  Regenerating...")
+            # print("Maze too small!  Regenerating...")
             self.__clear_dungeon()
-            self.generate(adv)
+            self.generate()
             return
 
-        print(self.display(3))
+        # check that all pillars and exit were placed
+        if not self.__validate_maze():
+            # print("Objective placement failed!  Regenerating...")
+            self.__clear_dungeon()
+            self.generate()
+            return
+
+        # print(self.display(3))
         # print(self)
 
-        # once rooms are built, generate pillars and exit
+    def __validate_maze(self):
+        """
+        Uses breadth-first search to ensure all objectives are in the maze.
+        Returns True if all objectives are present, False otherwise.
+        """
+        # define flags for objectives
+        pillar_flags = {
+            "A" : False,
+            "E" : False,
+            "I" : False,
+            "P" : False
+        }
+        exit_flag = False
+
+        # Set up beginning of traversal
+        room_dict = {
+            self.__entrance : 0
+        }
+        rooms_to_check = []
+
+        # We do the first loop manually to set up rooms_to_check
+        for dir in ["n", "w", "e", "s"]:
+            target_room = self.__entrance.get_dir(dir)
+            room_dict[target_room] = 1
+            rooms_to_check.append(target_room)
+
+        # now loop through everything else
+        while rooms_to_check:
+            this_room : Room = rooms_to_check.pop(0)
+            this_id = this_room.get_id()
+
+            if this_room.get_pillar():
+                pillar_flags[this_room.get_pillar()] = True
+            if this_room.is_exit():
+                exit_flag = True
+
+            # add adjacent rooms to queue
+            for dir in ["n", "w", "e", "s"]:
+                target_room : Room = this_room.get_dir(dir)
+                if target_room:
+                    target_id = target_room.get_id()
+                    if this_id < target_id: # prevents backtracking
+                        rooms_to_check.append(target_room)
+
+        # check flags now that loop is done
+        for pillar in pillar_flags:
+            if not pillar_flags[pillar]:
+                return False
+
+        # reaching this point means all pillars are present,
+        # so the exit flag is what makes or breaks things
+        return exit_flag
 
     def __create_entrance(self, adv) -> list[Room]:
         """
@@ -201,14 +278,16 @@ class Dungeon():
         }
 
         if target_room:
+            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
+
             target_room.enter(adv)
             self.__pl_location = target_room
             pl_room.leave()
-
-            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
-
         else:
             self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
+
+    def get_size(self):
+        return self.__size
 
     def __str__(self) -> str:
         """
@@ -224,9 +303,9 @@ class Dungeon():
 
             for room in row:
                 if room is None:
-                    line1 += "###"
-                    line2 += "###"
-                    line3 += "###"
+                    line1 += "///"
+                    line2 += "///"
+                    line3 += "///"
                 else:
                     room = room.__str__().split("\n")
                     line1 += str(room[0])
@@ -237,7 +316,7 @@ class Dungeon():
 
         return output_str
 
-    def display(self, vis_range) -> str:
+    def display(self, vis_range, potion_range) -> str:
         """
         Returns a string representing only the parts of the dungeon
         the player can see.
@@ -251,10 +330,28 @@ class Dungeon():
         for direction in ["n","w","s","e"]:
             next_room : Room = self.__pl_location.get_dir(direction)
             for _ in range(0, vis_range):
-                visible_rooms[next_room.get_id()] = True
-                next_room = next_room.get_dir(direction)
-                if not next_room:
-                    break
+                if next_room:
+                    visible_rooms[next_room.get_id()] = True
+                    next_room = next_room.get_dir(direction)
+                    if not next_room:
+                        break
+
+        # check if vision potion active
+        if potion_range > 0:
+            (pl_x, pl_y) = self.__pl_location.get_location()
+            for row in range(pl_x-potion_range, pl_x+potion_range+1):
+                for col in range(pl_y-potion_range, pl_y+potion_range+1):
+                    try:
+                        if col >= self.__size:
+                            col -= self.__size
+                        if row >= self.__size:
+                            row -= self.__size
+                        target_room : Room = self.__room_array[col][row]
+                        if target_room:
+                            visible_rooms[target_room.get_id()] = True
+                    except IndexError:
+                        print("display() attempted to access room out of bounds!")
+                    
 
         # Then we follow a similar process to __str__
         output_str = ""
@@ -308,8 +405,8 @@ class Dungeon():
     def debug_get_difficulty(self):
         return self.__diff
 
-    def debug_get_size(self):
-        return self.__size
-
     def debug_get_room_count(self):
         return self.__room_count
+
+    def debug_clear_dungeon(self):
+        self.__clear_dungeon()

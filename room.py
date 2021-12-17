@@ -58,7 +58,7 @@ class Room:
         else:
             item = " "
 
-        return f"*{north}*\n{west}{item}{east}\n*{south}*"
+        return f"+{north}+\n{west}{item}{east}\n+{south}+"
 
     def get_player(self):
         return self.__has_player
@@ -89,12 +89,16 @@ class Room:
         if pillar in pillars:
             self.__pillar = pillar
 
+    def get_pillar(self):
+        return self.__pillar
+
     def clear_room(self):
         self.__health_p = False
         self.__pit = False
         self.__vision_p = False
 
     def set_as_exit(self):
+        self.clear_room()
         self.__exit = True
 
     def leave(self):
@@ -106,6 +110,8 @@ class Room:
     def enter(self, adv):
         if self.__exit:
             adv.exit()
+            self.__has_player = True
+            return
         if self.__pillar:
             adv.earn_pillar(self.__pillar)
             self.__pillar = False
