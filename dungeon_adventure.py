@@ -15,7 +15,10 @@ class DungeonAdventure:
         self.__adventurer = None
         self.__diff = 1
         self.__root = tk.Tk()
+        self.__root.geometry("950x675+50+50")
         self.__root.title("Dungeon Adventure")
+
+        self.intro_slide = 0
 
         self.__start_canvas = None
         self.__game_canvas = None
@@ -25,10 +28,36 @@ class DungeonAdventure:
         self.__dungeon_legend = None
 
         self.__omniscience = False
-
         self.__game_over = False
 
-        self.start_menu()
+        self.initialize_intro()
+
+    def initialize_intro(self):
+        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
+        self.__start_canvas.pack(fill=tk.BOTH)
+
+        self.__root.bind("<Button-1>", self.advance_intro)
+
+        self.advance_intro(None)
+
+
+    def advance_intro(self, keypress):
+        if self.intro_slide == 0:
+            self.__title_image = tk.PhotoImage(file="intro_1.png")
+            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.intro_slide += 1
+        elif self.intro_slide == 1:
+            self.__title_image = tk.PhotoImage(file="intro_2.png")
+            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.intro_slide += 1
+        elif self.intro_slide == 2:
+            self.__title_image = tk.PhotoImage(file="intro_3.png")
+            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.intro_slide += 1
+        elif self.intro_slide == 3:
+            self.__start_canvas.destroy()
+            self.__root.unbind("<Button-1>")
+            self.start_menu()
 
     def __start_game(self):
         self.__delete_start_canvas()
@@ -61,7 +90,6 @@ class DungeonAdventure:
         self.__root.bind("<j>", self.use_vision_potion)
         self.__root.bind("<q>", self.adventurer_status)
 
-        self.__root.bind("<5>", self.cheat_codes)
         self.__root.bind("<6>", self.cheat_codes)
         self.__root.bind("<7>", self.cheat_codes)
         self.__root.bind("<8>", self.cheat_codes)
@@ -110,22 +138,20 @@ class DungeonAdventure:
         """
         if not self.__game_over:
             key = keypress.char
-            if key == "5":
-                self.__omniscience = True
+            if key == "6":
                 self.draw_whole_map()
-            elif key == "6":
-                self.__adventurer.earn_pillar("A")
-                self.__adventurer.earn_pillar("I")
-                self.__adventurer.earn_pillar("E")
-                self.__adventurer.earn_pillar("P")
             elif key == "7":
+                self.__omniscience = True
                 self.draw_whole_map()
             elif key == "8":
                 for _ in range(0, 50):
                     self.__adventurer.add_vision_potion()
-            elif key == "9":
-                for _ in range(0, 50):
                     self.__adventurer.add_health_potion()
+            elif key == "9":
+                self.__adventurer.earn_pillar("A")
+                self.__adventurer.earn_pillar("I")
+                self.__adventurer.earn_pillar("E")
+                self.__adventurer.earn_pillar("P")
             elif key == "0":
                 self.__adventurer.take_damage(1000, "the developers")
                 self.end_game()
@@ -182,8 +208,6 @@ class DungeonAdventure:
         """
         Creates and displays the start menu.
         """
-        self.__root.geometry("950x675+50+50")
-
         self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
         self.__start_canvas.pack(fill=tk.BOTH)
 
