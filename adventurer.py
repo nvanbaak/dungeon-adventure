@@ -107,7 +107,6 @@ class Adventurer:
 
     def exit(self):
         if len(self.__pillars) >= 4:
-            self.__game.announce("Congratulations!!! You've discovered all four pillars of OO!!!")
             self.__game.end_game()
             return
         else:
