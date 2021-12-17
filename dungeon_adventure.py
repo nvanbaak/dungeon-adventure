@@ -24,7 +24,6 @@ class DungeonAdventure:
 
         self.__dungeon_display = None
         self.__message_log = None
-        self.__dungeon_legend = None
 
         self.__omniscience = False
         self.__game_over = False
@@ -255,9 +254,12 @@ class DungeonAdventure:
 
     def cheats(self):
         codes = Toplevel(self.__root)
-        button = Button(codes, text="""There are currently three codes that you can use by typing them on your keyboard (while you are in the maze.) 
-        7 = See the whole map (note, this ends as soon as you move) \n8 = Increases your vision potion count by 1 
-        9 = Increases your health potions by 1""", font="Verdana 15 bold",
+        button = Button(codes, text="""There are currently five codes that you can use by typing them on your keyboard (while you are in the maze.) 
+        6 = Draw whole map (the whole maze is displayed permanently. (Recommended for people who hate fun)) 
+        7 = See the whole map (note, this ends as soon as you move) 
+        8 = Increases your health & vision potion count by 50!!! 
+        9 = Gives the adventurer all four pillars of OO
+        0 = developers hate the player, - 1000 HP. Your Dead""", font="Verdana 15 bold",
                         width=90)
         button.pack()
 
@@ -310,8 +312,9 @@ class DungeonAdventure:
         maze that can injure you and if you take to much damage, you will DIE!!! If that happens, the game ends and 
         you'll start over with a new adventurer and a new maze. To help you survive, we have placed some potions 
         within the maze to either restore your HP (health points) by pressing the 'h' button. Or, to help you see 
-        deeper within the maze, press the 'j' button. Once you've found all four pillars of OO, find the room with 
-        the 0 mark in the maze and enter it to complete the maze.""")
+        deeper within the maze, press the 'j' button. If You wish to check your adventurers stats, press the 'q' button.
+        Once you've found all four pillars of OO, find the room with the 0 mark in the maze and enter it to complete the
+         maze.""")
         button.pack()
 
     def dungeon_key_images(self):
