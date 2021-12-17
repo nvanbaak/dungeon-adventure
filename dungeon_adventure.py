@@ -14,7 +14,7 @@ class DungeonAdventure:
         self.__adventurer = None
         self.__diff = 1
         self.__root = tk.Tk()
-        self.__root.geometry("950x675+50+50")
+        self.__root.geometry("950x675+250+100")
         self.__root.title("Dungeon Adventure")
 
         self.intro_slide = 0
@@ -264,6 +264,9 @@ class DungeonAdventure:
         button.pack()
 
     def input_name(self):
+        """
+        Replaces start menu with entry fields for player name and difficulty.
+        """
         def user_input_adventurer_name():
 
             numbers_only = re.compile("[0-9]*")
@@ -283,23 +286,30 @@ class DungeonAdventure:
             else:
                 print("Please enter a difficulty between 1 and 3.")
 
+        self.__start_canvas.destroy()
+        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
+        self.__start_canvas.pack(fill=tk.BOTH)
+
+        self.__title_image = tk.PhotoImage(file="assets/title.png")
+        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+
         tk.Label(self.__start_canvas,
-                 text="Player Name").place(x=30, y=610)
+                 text="Player Name").place(x=240, y=540)
         tk.Label(self.__start_canvas,
-                 text="Difficulty").place(x=250, y=610)
+                 text="Difficulty").place(x=240, y=580)
 
         adv_name = tk.Entry(self.__start_canvas)
         diff = tk.Entry(self.__start_canvas)
 
-        adv_name.place(x=110, y=610)
-        diff.place(x=310, y=610)
+        adv_name.place(x=330, y=540)
+        diff.place(x=330, y=580)
 
         tk.Button(self.__start_canvas,
                   text='Quit',
-                  command=self.__root.destroy).place(x=250, y=640)
+                  command=self.__root.destroy).place(x=560, y=580)
 
         tk.Button(self.__start_canvas,
-                  text='Accept', command=user_input_adventurer_name).place(x=30, y=640)
+                  text='Accept', command=user_input_adventurer_name).place(x=560, y=540)
 
     def display_instructions(self):
         instructions = Toplevel(self.__root)
