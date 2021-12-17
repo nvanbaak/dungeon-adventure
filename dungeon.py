@@ -24,6 +24,8 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
+        self.generate()
+
     def generate(self) -> None:
         """
         Builds out the dungeon and places objects inside.

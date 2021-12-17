@@ -30,13 +30,11 @@ class DungeonAdventure:
         self.start_menu()
 
     def __start_game(self):
-        self.__adventurer = Adventurer("Test Adventurer", self)
         self.__delete_start_menu()
 
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
-        self.__dungeon.generate()
 
-        self.__text_area = tk.Text(self.__root, width=200, height=45)
+        self.__text_area = tk.Text(self.__root, width=100, height=50)
         self.__text_area.pack(anchor=NW)
 
         self.__text_area.insert("1.0", self.__dungeon.display(3, 0))
@@ -128,7 +126,7 @@ class DungeonAdventure:
         # --Buttons
         self.__st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
         self.__start_canvas.create_window(220, 580, window=self.__st_menu_button1)
-        self.__st_menu_button1.config(command=lambda: [self.input_name(), self.__delete_start_menu_buttons()])
+        self.__st_menu_button1.config(command=self.input_name)
 
         self.__st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
         self.__start_canvas.create_window(480, 580, window=self.__st_menu_button2)
@@ -151,29 +149,9 @@ class DungeonAdventure:
 
     def __delete_start_menu(self):
         self.__start_canvas.pack_forget()
-        self.__st_menu_button1.pack_forget()
-        self.__st_menu_button2.pack_forget()
-        self.__st_menu_button3.pack_forget()
-
-    def __delete_start_menu_buttons(self):
-        self.__st_menu_button1.pack_forget()
-        self.__st_menu_button2.pack_forget()
-        self.__st_menu_button3.pack_forget()
-
-    def resizer(self, e):
-
-        global bg, resized_bg, new_bg
-        # Open image
-        bg = PIL.Image.open("title.png")
-
-        # resize image
-        resize_bg = bg.resize((e.width, e.height), PIL.Image.ANTIALIAS)
-
-        # define image
-        new_bg = PIL.ImageTk.PhotoImage(resize_bg)
-
-        # Add back to Canvas
-        self.__start_canvas.create_image(0, 0, anchor=NW, image=new_bg)
+        # self.__st_menu_button1.pack_forget()
+        # self.__st_menu_button2.pack_forget()
+        # self.__st_menu_button3.pack_forget()
 
     def donothing(self):
         filewin = Toplevel(self.__root)
@@ -192,21 +170,14 @@ class DungeonAdventure:
     def input_name(self):
         def user_input_adventurer_name():
             try:
-                # if 1 <= int(diff.get()) >= 3 or int(diff.get()) != int:
                 if diff.get() == "1" or diff.get() == "2" or diff.get() == "3":
-
                     print(f"Name: {adv_name.get()}\nDifficulty: {int(diff.get())}")
                     self.__adventurer = Adventurer(adv_name.get(), self)
-                    # self.__delete_start_menu_buttons()
                     self.__delete_start_menu()
                     self.__start_game()
-                    # self.__delete_start_menu_buttons()
-                    # self.__root.after(1000,  self.__root.destroy())
                     return True
             except ValueError:
                 print("Error!!! Please input a values 1, 2 or 3 for difficulty please.")
-
-        self.__delete_start_menu_buttons()
 
         tk.Label(self.__root,
                  text="Player Name").place(x=30, y=610)
@@ -261,5 +232,4 @@ class DungeonAdventure:
         button.pack()
 
     def start_loop(self):
-        self.__root.bind('<Configure>', self.resizer)
         self.__root.mainloop()
