@@ -24,6 +24,8 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
+        self.generate()
+
     def generate(self) -> None:
         """
         Builds out the dungeon and places objects inside.
@@ -278,14 +280,16 @@ class Dungeon():
         }
 
         if target_room:
+            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
+
             target_room.enter(adv)
             self.__pl_location = target_room
             pl_room.leave()
-
-            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
-
         else:
             self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
+
+    def get_size(self):
+        return self.__size
 
     def __str__(self) -> str:
         """
@@ -402,9 +406,6 @@ class Dungeon():
 
     def debug_get_difficulty(self):
         return self.__diff
-
-    def debug_get_size(self):
-        return self.__size
 
     def debug_get_room_count(self):
         return self.__room_count

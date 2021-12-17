@@ -16,6 +16,9 @@ class Adventurer:
 
         self.__vision = 0
 
+    def is_dead(self):
+        return self.__hp <= 0
+
     def get_name(self):
         """
         Getter for name property.
@@ -26,8 +29,7 @@ class Adventurer:
         """
         Called by Room to add pillars to Adventurer's inventory.
         """
-        if pillar in self.__pillars:
-            raise Exception("Attempted to collect pillar <", pillar, "> a second time.")
+
         if pillar == "A" or pillar == "E" or pillar == "I" or pillar == "P":
             self.__pillars.append(pillar)
             self.__game.announce(f"Earned a pillar!  You now have {self.__pillars}")
@@ -98,14 +100,13 @@ class Adventurer:
             self.__vision -= 1
             self.__game.announce("The effects of your vision potion fade a little.")
 
-
     def take_damage(self, damage, source):
 
         self.__hp -= damage
-        print(f"Oh no! {self.__name} took {damage} from {source}!  They are now at {self.__hp} hp!")
+        self.__game.announce(f"Oh no! {self.__name} took {damage} from {source}!  They are now at {self.__hp} hp!")
 
     def exit(self):
-        if len(self.__pillars) == 4:
+        if len(self.__pillars) >= 4:
             self.__game.announce("Congratulations!!! You've discovered all four pillars of OO!!!")
             self.__game.end_game()
             return
@@ -114,9 +115,54 @@ class Adventurer:
             return
 
     def __str__(self):
-        return "\nName: " + self.__name + " HP: " + str(self.__hp) + " Number of health potions: " + \
-               str(self.__health_p) + " Number of vision potions: " + str(self.__vision_p) + " Pillars Found: " + \
-               str(self.__pillars)
+        def assemble_inventory_str(self, line):
+            pass
+
+        # calculate length of box
+        # box_length = 8 + len(self.__name)
+        # border = "+" + "-" * box_length + "+"
+
+        # produce a content line for each status item
+        name_str = f"Name: {self.__name}"
+        hp_str = f"HP: {self.__hp} / {self.__max_hp}"
+        healthp_str = f"Health potions: {self.__health_p}"
+        visionp_str = f"Vision potions: {self.__vision_p}"
+        pillar_string = f"Pillars found: {self.__pillars}"
+
+        status_items = [name_str, hp_str, healthp_str, visionp_str, pillar_string]
+
+        # find the longest status item and get its length
+        line_size = 0
+        for line in status_items:
+            if len(line) > line_size:
+                line_size = len(line)
+
+        # create borders
+        border = "+" + "-" * (line_size + 2) + "+"
+
+        # add spacers to all status items based on max length
+        # so that right border is even
+        output_str = "\n" + border
+        for line in status_items:
+            output_str += f"\n| {line}"
+            white_space = line_size - len(line)
+            if white_space > 0:
+                output_str += " " * white_space
+            output_str += " |"
+
+        output_str += f"\n{border}\n"
+
+        return output_str
+
+
+
+
+        # return "\nName: " + self.__name + "  \nHP: " + str(self.__hp) + "  \nHealth potions: " + \
+        #        str(self.__health_p) + " \nVision potions: " + str(self.__vision_p) + "  \nPillars Found: " + \
+        #        str(self.__pillars)
+
+
+
 
     # debug code, only used for unit tests
     def is_pillar_in_inventory(self, pillar):
