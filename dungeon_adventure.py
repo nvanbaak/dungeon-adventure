@@ -41,15 +41,15 @@ class DungeonAdventure:
 
     def advance_intro(self, keypress):
         if self.intro_slide == 0:
-            self.__title_image = tk.PhotoImage(file="intro_1.png")
+            self.__title_image = tk.PhotoImage(file="assets/intro_1.png")
             self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 1:
-            self.__title_image = tk.PhotoImage(file="intro_2.png")
+            self.__title_image = tk.PhotoImage(file="assets/intro_2.png")
             self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 2:
-            self.__title_image = tk.PhotoImage(file="intro_3.png")
+            self.__title_image = tk.PhotoImage(file="assets/intro_3.png")
             self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 3:
@@ -63,7 +63,7 @@ class DungeonAdventure:
         self.__game_canvas = tk.Canvas(self.__root, width=940, height=675)
         self.__game_canvas.pack(fill=tk.BOTH)
 
-        self.__game_bg = tk.PhotoImage(file="background.png")
+        self.__game_bg = tk.PhotoImage(file="assets/background.png")
         self.__game_canvas.create_image(0, 0, anchor=NW, image=self.__game_bg)
 
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
@@ -209,7 +209,7 @@ class DungeonAdventure:
         self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
         self.__start_canvas.pack(fill=tk.BOTH)
 
-        self.__title_image = tk.PhotoImage(file="title.png")
+        self.__title_image = tk.PhotoImage(file="assets/title.png")
         self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
 
         # --Buttons
