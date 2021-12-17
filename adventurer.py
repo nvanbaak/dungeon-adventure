@@ -29,8 +29,7 @@ class Adventurer:
         """
         Called by Room to add pillars to Adventurer's inventory.
         """
-        if pillar in self.__pillars:
-            raise Exception("Attempted to collect pillar <", pillar, "> a second time.")
+
         if pillar == "A" or pillar == "E" or pillar == "I" or pillar == "P":
             self.__pillars.append(pillar)
             self.__game.announce(f"Earned a pillar!  You now have {self.__pillars}")
@@ -101,14 +100,13 @@ class Adventurer:
             self.__vision -= 1
             self.__game.announce("The effects of your vision potion fade a little.")
 
-
     def take_damage(self, damage, source):
 
         self.__hp -= damage
-        print(f"Oh no! {self.__name} took {damage} from {source}!  They are now at {self.__hp} hp!")
+        self.__game.announce(f"Oh no! {self.__name} took {damage} from {source}!  They are now at {self.__hp} hp!")
 
     def exit(self):
-        if len(self.__pillars) == 4:
+        if len(self.__pillars) >= 4:
             self.__game.announce("Congratulations!!! You've discovered all four pillars of OO!!!")
             self.__game.end_game()
             return

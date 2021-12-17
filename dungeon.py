@@ -280,12 +280,11 @@ class Dungeon():
         }
 
         if target_room:
+            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
+
             target_room.enter(adv)
             self.__pl_location = target_room
             pl_room.leave()
-
-            self.__game.announce(f"{pl_name} opens the {dir_names[dir]} door.")
-
         else:
             self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
 

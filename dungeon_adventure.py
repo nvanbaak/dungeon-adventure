@@ -18,26 +18,39 @@ class DungeonAdventure:
         self.__root.title("Dungeon Adventure")
 
         self.__start_canvas = None
-        self.__st_menu_button1 = None
-        self.__st_menu_button2 = None
-        self.__st_menu_button3 = None
+        self.__game_canvas = None
 
-        self.__text_area = None
+        self.__dungeon_display = None
+        self.__message_log = None
+        self.__dungeon_legend = None
+
+        self.__omniscience = False
 
         self.__game_over = False
 
         self.start_menu()
 
     def __start_game(self):
-        self.__delete_start_menu()
+        self.__delete_start_canvas()
+
+        self.__game_canvas = tk.Canvas(self.__root, width=940, height=675)
+        self.__game_canvas.pack(fill=tk.BOTH)
+
+        self.__game_bg = tk.PhotoImage(file="background.png")
+        self.__game_canvas.create_image(0, 0, anchor=NW, image=self.__game_bg)
 
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
         textbox_size = self.__dungeon.get_size() * 3
 
-        self.__text_area = tk.Text(self.__root, width=textbox_size, height=textbox_size+2)
-        self.__text_area.pack(anchor=CENTER, padx=140, pady=50)
+        self.__dungeon_display = tk.Text(self.__game_canvas, width=textbox_size, height=textbox_size+4)
+        self.__dungeon_display.pack(anchor=CENTER, padx=140, pady=30, ipadx=20)
+
+        self.__message_log = tk.Text(self.__game_canvas, width=100, height=10)
+        self.__message_log.pack(pady=20)
+        self.__message_log.config(state="disabled")
 
         self.draw_map()
+        self.announce(self.__adventurer.__str__())
 
         self.__root.bind("<w>", self.move_player)
         self.__root.bind("<a>", self.move_player)
@@ -48,6 +61,8 @@ class DungeonAdventure:
         self.__root.bind("<j>", self.use_vision_potion)
         self.__root.bind("<q>", self.adventurer_status)
 
+        self.__root.bind("<5>", self.cheat_codes)
+        self.__root.bind("<6>", self.cheat_codes)
         self.__root.bind("<7>", self.cheat_codes)
         self.__root.bind("<8>", self.cheat_codes)
         self.__root.bind("<9>", self.cheat_codes)
@@ -67,12 +82,14 @@ class DungeonAdventure:
             self.__dungeon.move_player(self.__adventurer, dir_dict[keypress.char])
             self.__adventurer.decay_vision()
 
+            self.draw_map()
+
             if self.__adventurer.is_dead():
                 self.announce(f"{self.__adventurer.get_name()} has tragically expired.")
                 self.end_game()
-                return
 
-            self.draw_map()
+            if self.__game_over:
+                self.draw_whole_map()
 
     def adventurer_status(self, keypress):
         if not self.__game_over:
@@ -93,35 +110,65 @@ class DungeonAdventure:
         """
         if not self.__game_over:
             key = keypress.char
-            if key == "7":
+            if key == "5":
+                self.__omniscience = True
+                self.draw_whole_map()
+            elif key == "6":
+                self.__adventurer.earn_pillar("A")
+                self.__adventurer.earn_pillar("I")
+                self.__adventurer.earn_pillar("E")
+                self.__adventurer.earn_pillar("P")
+            elif key == "7":
                 self.draw_whole_map()
             elif key == "8":
-                self.__adventurer.add_vision_potion()
+                for _ in range(0, 50):
+                    self.__adventurer.add_vision_potion()
             elif key == "9":
-                self.__adventurer.add_health_potion()
+                for _ in range(0, 50):
+                    self.__adventurer.add_health_potion()
             elif key == "0":
                 self.__adventurer.take_damage(1000, "the developers")
+                self.end_game()
 
     def draw_map(self):
-        self.__text_area.config(state="normal")
-        self.__text_area.delete("1.0", "end")
-        self.__text_area.tag_configure("center", justify="center")
-        self.__text_area.insert("1.0", "\n\n" + self.__dungeon.display(3,
-                self.__adventurer.get_vision_range()))
-        self.__text_area.tag_add("center", "1.0", "end")
-        self.__text_area.config(state="disabled")
+        """
+        Gets the dungeon string from Dungeon and displays it in window
+        """
+        if not self.__omniscience:
+            self.__dungeon_display.config(state="normal")
+            self.__dungeon_display.delete("1.0", "end")
+            self.__dungeon_display.tag_configure("center", justify="center")
+            self.__dungeon_display.insert("1.0", "\n\n" + self.__dungeon.display(3,
+                    self.__adventurer.get_vision_range()))
+            self.__dungeon_display.tag_add("center", "1.0", "end")
+            self.__dungeon_display.config(state="disabled")
+        else:
+            self.draw_whole_map()
 
     def draw_whole_map(self):
         """
         Prints the entire dungeon to the game window
         """
-        self.__text_area.config(state="normal")
-        self.__text_area.delete("1.0", "end")
-        self.__text_area.insert("1.0", "\n\n" + self.__dungeon.__str__(), "center")
-        self.__text_area.config(state="disabled")
+        self.__dungeon_display.config(state="normal")
+        self.__dungeon_display.delete("1.0", "end")
+        self.__dungeon_display.insert("1.0", "\n\n" + self.__dungeon.__str__(), "center")
+        self.__dungeon_display.config(state="disabled")
 
     def announce(self, message):
-        print(message)
+
+        log_text = self.__message_log.get("1.0", "end")
+        log_text += message
+        log_text = log_text.split("\n")
+
+        if len(log_text) > 9:
+            log_text = log_text[-9:]
+
+        log_text = "\n".join(log_text)
+
+        self.__message_log.config(state="normal")
+        self.__message_log.delete("1.0", "end")
+        self.__message_log.insert("end", log_text)
+        self.__message_log.config(state="disabled")
 
     def end_game(self):
         self.__game_over = True
@@ -135,25 +182,26 @@ class DungeonAdventure:
         """
         Creates and displays the start menu.
         """
+        self.__root.geometry("950x675+50+50")
 
         self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
         self.__start_canvas.pack(fill=tk.BOTH)
 
-        title_image = tk.PhotoImage(file="title.png")
-        self.__start_canvas.create_image(0, 0, anchor=NW, image=title_image)
+        self.__title_image = tk.PhotoImage(file="title.png")
+        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
 
         # --Buttons
-        self.__st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
-        self.__start_canvas.create_window(220, 580, window=self.__st_menu_button1)
-        self.__st_menu_button1.config(command=self.input_name)
+        st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
+        self.__start_canvas.create_window(220, 580, window=st_menu_button1)
+        st_menu_button1.config(command=self.input_name)
 
-        self.__st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
-        self.__start_canvas.create_window(480, 580, window=self.__st_menu_button2)
-        self.__st_menu_button2.config(command=self.display_instructions)
+        st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
+        self.__start_canvas.create_window(480, 580, window=st_menu_button2)
+        st_menu_button2.config(command=self.display_instructions)
 
-        self.__st_menu_button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
-        self.__start_canvas.create_window(740, 580, window=self.__st_menu_button3)
-        self.__st_menu_button3.config(command=quit)
+        st_menu_button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
+        self.__start_canvas.create_window(740, 580, window=st_menu_button3)
+        st_menu_button3.config(command=quit)
 
         # --Menu (Help)
         menu_bar = Menu(self.__root)
@@ -166,11 +214,8 @@ class DungeonAdventure:
 
         self.__root.config(menu=menu_bar)
 
-    def __delete_start_menu(self):
-        self.__start_canvas.pack_forget()
-        # self.__st_menu_button1.pack_forget()
-        # self.__st_menu_button2.pack_forget()
-        # self.__st_menu_button3.pack_forget()
+    def __delete_start_canvas(self):
+        self.__start_canvas.destroy()
 
     def donothing(self):
         filewin = Toplevel(self.__root)
@@ -200,28 +245,28 @@ class DungeonAdventure:
             if 4 > int(self.__diff) and int(self.__diff) > 0:
                 print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
                 self.__adventurer = Adventurer(adv_name.get(), self)
-                self.__delete_start_menu()
+                self.__delete_start_canvas()
                 self.__start_game()
                 return
             else:
                 print("Please enter a difficulty between 1 and 3.")
 
-        tk.Label(self.__root,
+        tk.Label(self.__start_canvas,
                  text="Player Name").place(x=30, y=610)
-        tk.Label(self.__root,
+        tk.Label(self.__start_canvas,
                  text="Difficulty").place(x=250, y=610)
 
-        adv_name = tk.Entry(self.__root)
-        diff = tk.Entry(self.__root)
+        adv_name = tk.Entry(self.__start_canvas)
+        diff = tk.Entry(self.__start_canvas)
 
         adv_name.place(x=110, y=610)
         diff.place(x=310, y=610)
 
-        tk.Button(self.__root,
+        tk.Button(self.__start_canvas,
                   text='Quit',
                   command=self.__root.destroy).place(x=250, y=640)
 
-        tk.Button(self.__root,
+        tk.Button(self.__start_canvas,
                   text='Accept', command=user_input_adventurer_name).place(x=30, y=640)
 
     def display_instructions(self):
