@@ -20,10 +20,10 @@ class DungeonAdventure:
         self.intro_slide = 0
 
         self.__start_canvas = None
-        self.__game_canvas = None
 
         self.__dungeon_display = None
         self.__message_log = None
+        self.__legend = None
 
         self.__omniscience = False
         self.__game_over = False
@@ -65,27 +65,34 @@ class DungeonAdventure:
             self.start_menu()
 
     def __start_game(self):
-        self.__delete_start_canvas()
+        self.__reset_start_canvas("assets/background.png")
 
-        self.__game_canvas = tk.Canvas(self.__root, width=940, height=675)
-        self.__game_canvas.pack(fill=tk.BOTH)
-
-        self.__game_bg = tk.PhotoImage(file="assets/background.png")
-        self.__game_canvas.create_image(0, 0, anchor=NW, image=self.__game_bg)
-
+        # Setup dungeon & get size
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
         textbox_size = self.__dungeon.get_size() * 3
 
-        self.__dungeon_display = tk.Text(self.__game_canvas, width=textbox_size, height=textbox_size+4)
-        self.__dungeon_display.pack(anchor=CENTER, padx=140, pady=30, ipadx=20)
+        # build legend textbox
+        self.__legend = tk.Text(self.__start_canvas, width=38, height=textbox_size)
+        self.__legend.place(x=155, y=335, anchor=CENTER)
 
-        self.__message_log = tk.Text(self.__game_canvas, width=100, height=10)
-        self.__message_log.pack(pady=20)
+        spacer = "\n" * ((textbox_size - 10) // 2)
+        self.__legend.insert("end", 
+                spacer + "           *****LEGEND***** \n\n    @ = The Adventurer\n    A = pillar of Abstraction\n    E = Pillar of Encapsulation\n    I = Pillar of Inheritance\n    P = Pillar of Polymorphism\n    0 = Exit\n    X = Pit (watch out!)\n    H = Health Potion\n    V = Vision Potion\n    M = Both Potions\n    | = Wall")
+        self.__legend.config(state="disabled")
+
+        # build dungeon display
+        self.__dungeon_display = tk.Text(self.__start_canvas, width=textbox_size, height=textbox_size)
+        self.__dungeon_display.place(x=469, y=335, anchor=CENTER)
+
+        # build message box
+        self.__message_log = tk.Text(self.__start_canvas, width=40, height=textbox_size)
+        self.__message_log.place(x=790, y=335, anchor=CENTER)
         self.__message_log.config(state="disabled")
 
         self.draw_map()
         self.announce(self.__adventurer.__str__())
 
+        # keybinds
         self.__root.bind("<w>", self.move_player)
         self.__root.bind("<a>", self.move_player)
         self.__root.bind("<s>", self.move_player)
@@ -95,6 +102,7 @@ class DungeonAdventure:
         self.__root.bind("<j>", self.use_vision_potion)
         self.__root.bind("<q>", self.adventurer_status)
 
+        self.__root.bind("<p>", self.cheat_codes)
         self.__root.bind("<6>", self.cheat_codes)
         self.__root.bind("<7>", self.cheat_codes)
         self.__root.bind("<8>", self.cheat_codes)
@@ -143,6 +151,8 @@ class DungeonAdventure:
         """
         if not self.__game_over:
             key = keypress.char
+            if key == "p":
+                self.__start_game()
             if key == "6":
                 self.draw_whole_map()
             elif key == "7":
@@ -159,6 +169,7 @@ class DungeonAdventure:
                 self.__adventurer.earn_pillar("P")
             elif key == "0":
                 self.__adventurer.take_damage(1000, "the developers")
+                self.draw_whole_map()
                 self.end_game()
 
     def draw_map(self):
@@ -169,7 +180,7 @@ class DungeonAdventure:
             self.__dungeon_display.config(state="normal")
             self.__dungeon_display.delete("1.0", "end")
             self.__dungeon_display.tag_configure("center", justify="center")
-            self.__dungeon_display.insert("1.0", "\n\n" + self.__dungeon.display(3,
+            self.__dungeon_display.insert("1.0", self.__dungeon.display(3,
                     self.__adventurer.get_vision_range()))
             self.__dungeon_display.tag_add("center", "1.0", "end")
             self.__dungeon_display.config(state="disabled")
@@ -182,17 +193,53 @@ class DungeonAdventure:
         """
         self.__dungeon_display.config(state="normal")
         self.__dungeon_display.delete("1.0", "end")
-        self.__dungeon_display.insert("1.0", "\n\n" + self.__dungeon.__str__(), "center")
+        self.__dungeon_display.insert("1.0", self.__dungeon.__str__(), "center")
         self.__dungeon_display.config(state="disabled")
 
     def announce(self, message):
 
         log_text = self.__message_log.get("1.0", "end")
+        string_wrap = False
+
+        # If the string is too long, search for newline or space for wrap
+        newline_index = 38 if len(message) >= 39 else len(message) - 1
+        space_index = 38 if len(message) >= 39 else len(message) - 1
+
+        while len(message) > 39:
+
+            # search for newlines first so we can have more control over formatting
+            while newline_index > 0:
+                if message[newline_index] == "\n":
+                    log_text += "\n" + message[:newline_index]
+                    message = message[newline_index+1:]
+
+                    # After splitting the string, reset both indices for next loop
+                    newline_index = 38 if len(message) >= 39 else len(message) - 1
+                    space_index = 38 if len(message) >= 39 else len(message) - 1
+                    string_wrap = True
+                else:
+                    newline_index -= 1
+
+            # space search follows same logic as newline search
+            while space_index > 0:
+                if message[space_index] == " ":
+                    log_text += "\n" + message[:space_index]
+                    message = message[space_index+1:]
+
+                    newline_index = 38 if len(message) >= 39 else len(message) - 1
+                    space_index = 38 if len(message) >= 39 else len(message) - 1
+                    string_wrap = True
+                else:
+                    space_index -= 1
+        if string_wrap:
+            message = " " + message
         log_text += message
         log_text = log_text.split("\n")
 
-        if len(log_text) > 9:
-            log_text = log_text[-9:]
+        log_length = self.__dungeon.get_size() * 3 - 2
+
+        if len(log_text) > log_length:
+            log_text = log_text[-log_length:]
 
         log_text = "\n".join(log_text)
 
@@ -203,11 +250,12 @@ class DungeonAdventure:
 
     def end_game(self):
         self.__game_over = True
+        self.announce(self.__adventurer.__str__())
         if self.__adventurer.is_dead():
             self.announce("You lose!  Better luck next time!")
         else:
-            self.announce("Victory is yours!  You have mastered the four pillars of object-oriented progamming!")
-            self.announce("Without them, the dungeon crumbles behind you.")
+            self.announce("Victory is yours!\nYou have taken the four pillars of object-oriented progamming!")
+            self.announce("Without them, the dungeon crumbles behind you.  Whoops!")
 
     def start_menu(self):
         """
@@ -243,8 +291,13 @@ class DungeonAdventure:
 
         self.__root.config(menu=menu_bar)
 
-    def __delete_start_canvas(self):
+    def __reset_start_canvas(self, file_str):
         self.__start_canvas.destroy()
+        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
+        self.__start_canvas.pack(fill=tk.BOTH)
+
+        self.__title_image = tk.PhotoImage(file=file_str)
+        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
 
     def donothing(self):
         filewin = Toplevel(self.__root)
@@ -280,18 +333,13 @@ class DungeonAdventure:
             if 4 > int(self.__diff) and int(self.__diff) > 0:
                 print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
                 self.__adventurer = Adventurer(adv_name.get(), self)
-                self.__delete_start_canvas()
+                self.__reset_start_canvas("assets/background.png")
                 self.__start_game()
                 return
             else:
                 print("Please enter a difficulty between 1 and 3.")
 
-        self.__start_canvas.destroy()
-        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
-        self.__start_canvas.pack(fill=tk.BOTH)
-
-        self.__title_image = tk.PhotoImage(file="assets/title.png")
-        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+        self.__reset_start_canvas("assets/title.png")
 
         tk.Label(self.__start_canvas,
                  text="Player Name").place(x=240, y=540)
