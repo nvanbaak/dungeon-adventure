@@ -35,7 +35,7 @@ class Dungeon():
 
         # we have 4 pillars and an exit to place
         pillars = ["E", "I", "A", "P"]
-        exit_room = 35 + self.__diff * 5
+        exit_room = 30 + self.__diff * 10
 
         # next, continue adding and linking rooms
         while rooms_to_build:

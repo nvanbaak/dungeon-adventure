@@ -384,7 +384,8 @@ class DungeonAdventure:
         within the maze to either restore your HP (health points) by pressing the 'h' button. Or, to help you see 
         deeper within the maze, press the 'j' button. If You wish to check your adventurers stats, press the 'q' button.
         Once you've found all four pillars of OO, find the room with the 0 mark in the maze and enter it to complete the
-         maze.""")
+        maze. Important to note, if the edges have holes, you can walk through them and it'll warp you to the other 
+        side of the maze!!!""")
         button.pack()
 
     def dungeon_key_images(self):
