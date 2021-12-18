@@ -43,7 +43,7 @@ class Adventurer:
         """
         self.__health_p += 1
         self.__game.announce(
-                f"You pick up a health potion.  You now have {self.__health_p} of them.")
+                f"You pick up a health potion.\nYou now have {self.__health_p} of them.")
         return self.__health_p
 
     def use_health_potion(self):
@@ -74,7 +74,7 @@ class Adventurer:
         """
         self.__vision_p += 1
         self.__game.announce(
-                f"You pick up a vision potion.  You now have {self.__vision_p} of them.")
+                f"You pick up a vision potion.\nYou now have {self.__vision_p} of them.")
         return self.__vision_p
 
     def use_vision_potion(self):
@@ -103,23 +103,17 @@ class Adventurer:
     def take_damage(self, damage, source):
 
         self.__hp -= damage
-        self.__game.announce(f"Oh no! {self.__name} took {damage} from {source}!  They are now at {self.__hp} hp!")
+        self.__game.announce(f"Oh no! {self.__name} took {damage} dmg from {source}!\nThey are now at {self.__hp} hp!")
 
     def exit(self):
         if len(self.__pillars) >= 4:
             self.__game.end_game()
             return
         else:
-            self.__game.announce("You feel like you could escape from this room if only you knew more about programming.")
+            self.__game.announce("You feel like you could escape from\nthis room if only you knew more\nabout programming.")
             return
 
     def __str__(self):
-        def assemble_inventory_str(self, line):
-            pass
-
-        # calculate length of box
-        # box_length = 8 + len(self.__name)
-        # border = "+" + "-" * box_length + "+"
 
         # produce a content line for each status item
         name_str = f"Name: {self.__name}"
@@ -152,15 +146,6 @@ class Adventurer:
         output_str += f"\n{border}\n"
 
         return output_str
-
-
-
-
-        # return "\nName: " + self.__name + "  \nHP: " + str(self.__hp) + "  \nHealth potions: " + \
-        #        str(self.__health_p) + " \nVision potions: " + str(self.__vision_p) + "  \nPillars Found: " + \
-        #        str(self.__pillars)
-
-
 
 
     # debug code, only used for unit tests

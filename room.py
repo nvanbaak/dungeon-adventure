@@ -122,7 +122,7 @@ class Room:
             adv.add_health_potion()
             self.__health_p = False
         if self.__pit:
-            adv.take_damage(self.__pit, "pit trap")
+            adv.take_damage(self.__pit, "a pit trap")
 
         self.__has_player = True
 

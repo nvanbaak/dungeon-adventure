@@ -35,7 +35,7 @@ class Dungeon():
 
         # we have 4 pillars and an exit to place
         pillars = ["E", "I", "A", "P"]
-        exit_room = 35 + self.__diff * 5
+        exit_room = 30 + self.__diff * 10
 
         # next, continue adding and linking rooms
         while rooms_to_build:
@@ -45,9 +45,13 @@ class Dungeon():
             # use id to place exit and pillars
             if new_room.get_id() == exit_room:
                 new_room.set_as_exit()
-            elif pillars and new_room.get_id() > 24:
-                pillar_threshold = 0.2
-                if random.random() < pillar_threshold:
+            elif pillars and new_room.get_id() > (16 * self.__diff):
+                pillar_threshold = {
+                    1 : 0.10,
+                    2 : 0.5,
+                    3 : 0.02
+                }
+                if random.random() < pillar_threshold[self.__diff]:
                     new_room.clear_room()
                     new_room.set_pillar(pillars.pop())
 
@@ -65,7 +69,7 @@ class Dungeon():
                     if new_room.get_dir(dir) is None:
 
                         # random chance to make wall or corridor
-                        chance_to_wall = .55
+                        chance_to_wall = .525
                         if random.random() < chance_to_wall:
                             new_room.wall(dir)
                         else:
@@ -284,7 +288,7 @@ class Dungeon():
             self.__pl_location = target_room
             pl_room.leave()
         else:
-            self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
+            self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs\nheadfirst into the wall.")
 
     def get_size(self):
         return self.__size
