@@ -17,6 +17,9 @@ class Adventurer:
         self.__vision = 0
 
     def is_dead(self):
+        """
+        Returns true if the adventurer's HP is above 0, and False otherwise.
+        """
         return self.__hp <= 0
 
     def get_name(self):
@@ -93,19 +96,30 @@ class Adventurer:
             return False
 
     def get_vision_range(self):
+        """
+        Returns vision range of adventurer.
+        """
         return self.__vision
 
     def decay_vision(self):
+        """
+        Reduces vision by 1 if it's above 0.
+        """
         if self.__vision > 0:
             self.__vision -= 1
             self.__game.announce("The effects of your vision potion fade a little.")
 
     def take_damage(self, damage, source):
-
+        """
+        Reduces HP by the indicated amount and makes an announcement.
+        """
         self.__hp -= damage
         self.__game.announce(f"Oh no! {self.__name} took {damage} dmg from {source}!\nThey are now at {self.__hp} hp!")
 
     def exit(self):
+        """
+        Ends the game if the adventurer has all four pillars.  Makes an announcement either way.
+        """
         if len(self.__pillars) >= 4:
             self.__game.end_game()
             return
@@ -114,6 +128,9 @@ class Adventurer:
             return
 
     def __str__(self):
+        """
+        Returns a string representation of the Adventurer.
+        """
 
         # produce a content line for each status item
         name_str = f"Name: {self.__name}"

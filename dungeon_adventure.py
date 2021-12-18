@@ -33,6 +33,9 @@ class DungeonAdventure:
         self.initialize_intro()
 
     def initialize_intro(self):
+        """
+        Sets up canvas for intro slides, then calls the intro method.
+        """
 
         self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
         self.__start_canvas.configure(bg="#FFBF90")
@@ -44,6 +47,10 @@ class DungeonAdventure:
         self.advance_intro(None)
 
     def advance_intro(self, keypress):
+        """
+        Each time the method is called, changes the image to create a pseudo-slideshow.
+        When the last slide is reached, calls the start menu.
+        """
         if self.intro_slide == 0:
             self.__title_image = tk.PhotoImage(file="assets/intro_1.png")
             self.__start_canvas.create_image(
@@ -75,6 +82,9 @@ class DungeonAdventure:
             self.start_menu()
 
     def __start_game(self):
+        """
+        Sets up the main game interface and binds the controls to enable play.
+        """
         self.__reset_start_canvas(None)
 
         # Setup dungeon & get size
@@ -144,21 +154,30 @@ class DungeonAdventure:
                 self.draw_whole_map()
 
     def adventurer_status(self, keypress):
+        """
+        Prints adventurer status to announcements.
+        """
         if not self.__game_over:
             self.announce(f"{self.__adventurer.__str__()}")
 
     def use_health_potion(self, keypress):
+        """
+        Has the adventurer drink a health potion.
+        """
         if not self.__game_over:
             self.__adventurer.use_health_potion()
 
     def use_vision_potion(self, keypress):
+        """
+        Has the adventurer drink a vision potion.
+        """
         if not self.__game_over:
             self.__adventurer.use_vision_potion()
             self.draw_map()
 
     def cheat_codes(self, keypress):
         """
-        Number keys are cheats
+        Enables various cheats when number keys are pressed.
         """
         if not self.__game_over:
             key = keypress.char
@@ -208,12 +227,15 @@ class DungeonAdventure:
         self.__dungeon_display.config(state="disabled")
 
     def announce(self, message):
+        """
+        Given a string, prints it to the message log
+        """
 
         log_text = self.__message_log.get("1.0", "end")
         log_text += message
         log_text = log_text.split("\n")
 
-        log_length = self.__dungeon.get_size() * 3 - 2
+        log_length = self.__dungeon.get_size() * 3 - 5
 
         if len(log_text) > log_length:
             log_text = log_text[-log_length:]
@@ -226,6 +248,9 @@ class DungeonAdventure:
         self.__message_log.config(state="disabled")
 
     def end_game(self):
+        """
+        Ends the game and makes the appropriate announcements.
+        """
         self.__game_over = True
         self.announce(self.__adventurer.__str__())
         if self.__adventurer.is_dead():
@@ -264,6 +289,9 @@ class DungeonAdventure:
         st_menu_button3.config(command=quit)
 
     def make_help_menu(self):
+        """
+        Creates the help menu and addes it to application menu.
+        """
         # --Menu (Help)
         menu_bar = Menu(self.__root)
 
@@ -276,6 +304,9 @@ class DungeonAdventure:
         self.__root.config(menu=menu_bar)
 
     def __reset_start_canvas(self, file_str):
+        """
+        Resets the canvas by deleting it and making a fresh one.
+        """
         self.__start_canvas.destroy()
         self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
         self.__start_canvas.configure(bg="#FFBF90")
@@ -286,12 +317,18 @@ class DungeonAdventure:
             self.__start_canvas.create_image(self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
 
     def donothing(self):
+        """
+        Taunts the player for daring to ask for help.
+        """
         filewin = Toplevel(self.__root)
         button = Button(filewin, text="Help yourself fool!!! \n Read a book or something!!!", font="Verdana 20 bold",
                         width=40)
         button.pack()
 
     def cheats(self):
+        """
+        Menu option explaining the cheats.
+        """
         codes = Toplevel(self.__root)
         button = Button(codes, text="""There are currently five codes that you can use by typing them on your keyboard (while you are in the maze.) 
         6 = Draw whole map (the whole maze is displayed permanently. (Recommended for people who hate fun)) 
@@ -349,6 +386,9 @@ class DungeonAdventure:
                   text='Accept', command=user_input_adventurer_name).place(x=button_x+200, y=button_y-40)
 
     def display_instructions(self):
+        """
+        Gives the player a briefing on how to play the game.
+        """
         instructions = Toplevel(self.__root)
         instructions.title("Instructions")
 
@@ -366,6 +406,9 @@ class DungeonAdventure:
         button.pack()
 
     def dungeon_key_images(self):
+        """
+        Displays a legend for the dungeon screen.
+        """
         dungeon_key = Toplevel(self.__root)
         dungeon_key.title("Dungeon Key")
 
@@ -385,4 +428,7 @@ class DungeonAdventure:
         button.pack()
 
     def start_loop(self):
+        """
+        Begins the main loop
+        """
         self.__root.mainloop()

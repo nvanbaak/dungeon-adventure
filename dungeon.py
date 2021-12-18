@@ -26,6 +26,17 @@ class Dungeon():
 
         self.generate()
 
+    ##################################
+    #       Getters / Setters        #
+    ##################################
+
+    def get_size(self):
+        return self.__size
+
+    ##################################
+    #   Generate + helper functions  #
+    ##################################
+
     def generate(self) -> None:
         """
         Builds out the dungeon and places objects inside.
@@ -254,6 +265,10 @@ class Dungeon():
                 row.append(None)
             self.__room_array.append(row)
 
+    #####################################
+    # Interaction with DungeonAdventure #
+    #####################################
+
     def move_player(self, adv : Adventurer, dir) -> None:
         """
         Moves the player within the dungeon if there's an open door in the specified direction.
@@ -285,9 +300,6 @@ class Dungeon():
             pl_room.leave()
         else:
             self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs\nheadfirst into the wall.")
-
-    def get_size(self):
-        return self.__size
 
     def __str__(self) -> str:
         """
