@@ -1,8 +1,6 @@
 import tkinter as tk
 from adventurer import Adventurer
 from dungeon import Dungeon
-# import PIL
-# from PIL import ImageTk, Image
 
 from tkinter import *
 
@@ -31,8 +29,6 @@ class DungeonAdventure:
 
         self.__make_help_menu()
         self.__initialize_intro()
-
-
 
     def start_loop(self):
         """
