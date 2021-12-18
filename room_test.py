@@ -3,8 +3,6 @@ from room import Room
 from adventurer import Adventurer
 from mock_game import MockGame as Game
 
-
-
 class Room_Test(unittest.TestCase):
     def test_init(self):
         try:

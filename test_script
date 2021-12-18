@@ -1,0 +1,12 @@
+#! /bin/bash
+
+echo "Running test scripts!"
+echo
+echo "Testing Room class..."
+py -3 room_test.py
+echo
+echo "Testing Adventurer class.."
+py -3 adventurer_tests.py
+echo
+echo "Testing Dungeon class.."
+py -3 dungeon_tests.py

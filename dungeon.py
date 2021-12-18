@@ -123,15 +123,11 @@ class Dungeon():
         exit_flag = False
 
         # Set up beginning of traversal
-        room_dict = {
-            self.__entrance : 0
-        }
         rooms_to_check = []
 
         # We do the first loop manually to set up rooms_to_check
         for dir in ["n", "w", "e", "s"]:
             target_room = self.__entrance.get_dir(dir)
-            room_dict[target_room] = 1
             rooms_to_check.append(target_room)
 
         # now loop through everything else
