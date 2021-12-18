@@ -18,7 +18,7 @@ class DungeonAdventure:
         self.__root.geometry(f"{self.__window_size[0]}x{self.__window_size[1]}+250+100")
         self.__root.title("Dungeon Adventure")
 
-        self.intro_slide = 0
+        self.__intro_slide = 0
 
         self.__start_canvas = None
 
@@ -29,10 +29,30 @@ class DungeonAdventure:
         self.__omniscience = False
         self.__game_over = False
 
-        self.make_help_menu()
-        self.initialize_intro()
+        self.__make_help_menu()
+        self.__initialize_intro()
 
-    def initialize_intro(self):
+
+    ##################################
+    #          GUI methods
+    ##################################
+
+    def __make_help_menu(self):
+        """
+        Creates the help menu and addes it to application menu.
+        """
+        # --Menu (Help)
+        menu_bar = Menu(self.__root)
+
+        help_menu = Menu(menu_bar, tearoff=0)
+        help_menu.add_command(label="Cheats", command=self.__display_cheats)
+        help_menu.add_command(label="Dungeon Key", command=self.__dungeon_key_images)
+        help_menu.add_command(label="Help request", command=self.__donothing)
+        menu_bar.add_cascade(label="Help", menu=help_menu)
+
+        self.__root.config(menu=menu_bar)
+
+    def __initialize_intro(self):
         """
         Sets up canvas for intro slides, then calls the intro method.
         """
@@ -42,44 +62,44 @@ class DungeonAdventure:
 
         self.__start_canvas.pack(expand=True)
 
-        self.__root.bind("<Button-1>", self.advance_intro)
+        self.__root.bind("<Button-1>", self.__advance_intro)
 
-        self.advance_intro(None)
+        self.__advance_intro(None)
 
-    def advance_intro(self, keypress):
+    def __advance_intro(self, keypress):
         """
         Each time the method is called, changes the image to create a pseudo-slideshow.
         When the last slide is reached, calls the start menu.
         """
-        if self.intro_slide == 0:
+        if self.__intro_slide == 0:
             self.__title_image = tk.PhotoImage(file="assets/intro_1.png")
             self.__start_canvas.create_image(
                     self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
-            self.intro_slide += 1
-        elif self.intro_slide == 1:
+            self.__intro_slide += 1
+        elif self.__intro_slide == 1:
             self.__title_image = tk.PhotoImage(file="assets/intro_2.png")
             self.__start_canvas.create_image(
                     self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
-            self.intro_slide += 1
-        elif self.intro_slide == 2:
+            self.__intro_slide += 1
+        elif self.__intro_slide == 2:
             self.__title_image = tk.PhotoImage(file="assets/intro_3.png")
             self.__start_canvas.create_image(
                     self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
-            self.intro_slide += 1
-        elif self.intro_slide == 3:
+            self.__intro_slide += 1
+        elif self.__intro_slide == 3:
             self.__title_image = tk.PhotoImage(file="assets/controls.png")
             self.__start_canvas.create_image(
                     self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
-            self.intro_slide += 1
-        elif self.intro_slide == 4:
+            self.__intro_slide += 1
+        elif self.__intro_slide == 4:
             self.__title_image = tk.PhotoImage(file="assets/objectives.png")
             self.__start_canvas.create_image(
                     self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
-            self.intro_slide += 1
-        elif self.intro_slide == 5:
+            self.__intro_slide += 1
+        elif self.__intro_slide == 5:
             self.__start_canvas.destroy()
             self.__root.unbind("<Button-1>")
-            self.start_menu()
+            self.__start_menu()
 
     def __start_game(self):
         """
@@ -110,27 +130,27 @@ class DungeonAdventure:
         self.__message_log.place(x=self.__window_size[0], y=tb_y, anchor="e")
         self.__message_log.config(state="disabled")
 
-        self.draw_map()
+        self.__draw_map()
         self.announce(self.__adventurer.__str__())
 
         # keybinds
-        self.__root.bind("<w>", self.move_player)
-        self.__root.bind("<a>", self.move_player)
-        self.__root.bind("<s>", self.move_player)
-        self.__root.bind("<d>", self.move_player)
+        self.__root.bind("<w>", self.__move_player)
+        self.__root.bind("<a>", self.__move_player)
+        self.__root.bind("<s>", self.__move_player)
+        self.__root.bind("<d>", self.__move_player)
 
-        self.__root.bind("<h>", self.use_health_potion)
-        self.__root.bind("<j>", self.use_vision_potion)
-        self.__root.bind("<q>", self.adventurer_status)
+        self.__root.bind("<h>", self.__use_health_potion)
+        self.__root.bind("<j>", self.__use_vision_potion)
+        self.__root.bind("<q>", self.__adventurer_status)
 
-        self.__root.bind("<p>", self.cheat_codes)
-        self.__root.bind("<6>", self.cheat_codes)
-        self.__root.bind("<7>", self.cheat_codes)
-        self.__root.bind("<8>", self.cheat_codes)
-        self.__root.bind("<9>", self.cheat_codes)
-        self.__root.bind("<0>", self.cheat_codes)
+        self.__root.bind("<p>", self.__cheat_codes)
+        self.__root.bind("<6>", self.__cheat_codes)
+        self.__root.bind("<7>", self.__cheat_codes)
+        self.__root.bind("<8>", self.__cheat_codes)
+        self.__root.bind("<9>", self.__cheat_codes)
+        self.__root.bind("<0>", self.__cheat_codes)
 
-    def move_player(self, keypress):
+    def __move_player(self, keypress):
         """
         Passes keyboard input to dungeon to move the player
         """
@@ -144,38 +164,38 @@ class DungeonAdventure:
             self.__dungeon.move_player(self.__adventurer, dir_dict[keypress.char])
             self.__adventurer.decay_vision()
 
-            self.draw_map()
+            self.__draw_map()
 
             if self.__adventurer.is_dead():
                 self.announce(f"{self.__adventurer.get_name()} has tragically expired.")
                 self.end_game()
 
             if self.__game_over:
-                self.draw_whole_map()
+                self.__draw_whole_map()
 
-    def adventurer_status(self, keypress):
+    def __adventurer_status(self, keypress):
         """
         Prints adventurer status to announcements.
         """
         if not self.__game_over:
             self.announce(f"{self.__adventurer.__str__()}")
 
-    def use_health_potion(self, keypress):
+    def __use_health_potion(self, keypress):
         """
         Has the adventurer drink a health potion.
         """
         if not self.__game_over:
             self.__adventurer.use_health_potion()
 
-    def use_vision_potion(self, keypress):
+    def __use_vision_potion(self, keypress):
         """
         Has the adventurer drink a vision potion.
         """
         if not self.__game_over:
             self.__adventurer.use_vision_potion()
-            self.draw_map()
+            self.__draw_map()
 
-    def cheat_codes(self, keypress):
+    def __cheat_codes(self, keypress):
         """
         Enables various cheats when number keys are pressed.
         """
@@ -184,10 +204,10 @@ class DungeonAdventure:
             if key == "p":
                 self.__start_game()
             if key == "6":
-                self.draw_whole_map()
+                self.__draw_whole_map()
             elif key == "7":
                 self.__omniscience = True
-                self.draw_whole_map()
+                self.__draw_whole_map()
             elif key == "8":
                 for _ in range(0, 50):
                     self.__adventurer.add_vision_potion()
@@ -199,10 +219,10 @@ class DungeonAdventure:
                 self.__adventurer.earn_pillar("P")
             elif key == "0":
                 self.__adventurer.take_damage(1000, "the developers")
-                self.draw_whole_map()
+                self.__draw_whole_map()
                 self.end_game()
 
-    def draw_map(self):
+    def __draw_map(self):
         """
         Gets the dungeon string from Dungeon and displays it in window
         """
@@ -215,9 +235,9 @@ class DungeonAdventure:
             self.__dungeon_display.tag_add("center", "1.0", "end")
             self.__dungeon_display.config(state="disabled")
         else:
-            self.draw_whole_map()
+            self.__draw_whole_map()
 
-    def draw_whole_map(self):
+    def __draw_whole_map(self):
         """
         Prints the entire dungeon to the game window
         """
@@ -259,7 +279,7 @@ class DungeonAdventure:
             self.announce("Victory is yours!\nYou have taken the four pillars of object-oriented \nprogamming!")
             self.announce("Without them, the dungeon crumbles behind you.  Whoops!")
 
-    def start_menu(self):
+    def __start_menu(self):
         """
         Creates and displays the start menu.
         """
@@ -278,30 +298,15 @@ class DungeonAdventure:
 
         st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
         self.__start_canvas.create_window(button_x-260, button_y, window=st_menu_button1)
-        st_menu_button1.config(command=self.input_name)
+        st_menu_button1.config(command=self.__input_name)
 
         st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
         self.__start_canvas.create_window(button_x, button_y, window=st_menu_button2)
-        st_menu_button2.config(command=self.display_instructions)
+        st_menu_button2.config(command=self.__display_instructions)
 
         st_menu_button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
         self.__start_canvas.create_window(button_x+260, button_y, window=st_menu_button3)
         st_menu_button3.config(command=quit)
-
-    def make_help_menu(self):
-        """
-        Creates the help menu and addes it to application menu.
-        """
-        # --Menu (Help)
-        menu_bar = Menu(self.__root)
-
-        help_menu = Menu(menu_bar, tearoff=0)
-        help_menu.add_command(label="Cheats", command=self.cheats)
-        help_menu.add_command(label="Dungeon Key", command=self.dungeon_key_images)
-        help_menu.add_command(label="Help request", command=self.donothing)
-        menu_bar.add_cascade(label="Help", menu=help_menu)
-
-        self.__root.config(menu=menu_bar)
 
     def __reset_start_canvas(self, file_str):
         """
@@ -316,7 +321,7 @@ class DungeonAdventure:
             self.__title_image = tk.PhotoImage(file=file_str)
             self.__start_canvas.create_image(self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
 
-    def donothing(self):
+    def __donothing(self):
         """
         Taunts the player for daring to ask for help.
         """
@@ -325,7 +330,7 @@ class DungeonAdventure:
                         width=40)
         button.pack()
 
-    def cheats(self):
+    def __display_cheats(self):
         """
         Menu option explaining the cheats.
         """
@@ -340,7 +345,7 @@ class DungeonAdventure:
                         width=90)
         button.pack()
 
-    def input_name(self):
+    def __input_name(self):
         """
         Replaces start menu with entry fields for player name and difficulty.
         """
@@ -385,7 +390,7 @@ class DungeonAdventure:
         tk.Button(self.__start_canvas,
                   text='Accept', command=user_input_adventurer_name).place(x=button_x+200, y=button_y-40)
 
-    def display_instructions(self):
+    def __display_instructions(self):
         """
         Gives the player a briefing on how to play the game.
         """
@@ -405,7 +410,7 @@ class DungeonAdventure:
         side of the maze!!!""")
         button.pack()
 
-    def dungeon_key_images(self):
+    def __dungeon_key_images(self):
         """
         Displays a legend for the dungeon screen.
         """
