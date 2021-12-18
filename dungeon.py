@@ -288,7 +288,7 @@ class Dungeon():
             self.__pl_location = target_room
             pl_room.leave()
         else:
-            self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs headfirst into the wall.")
+            self.__game.announce(f"{pl_name} tries to move {dir_names[dir]} and runs\nheadfirst into the wall.")
 
     def get_size(self):
         return self.__size

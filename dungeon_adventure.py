@@ -14,7 +14,8 @@ class DungeonAdventure:
         self.__adventurer = None
         self.__diff = 1
         self.__root = tk.Tk()
-        self.__root.geometry("950x675+250+100")
+        self.__window_size = (1150, 875)
+        self.__root.geometry(f"{self.__window_size[0]}x{self.__window_size[1]}+250+100")
         self.__root.title("Dungeon Adventure")
 
         self.intro_slide = 0
@@ -28,11 +29,13 @@ class DungeonAdventure:
         self.__omniscience = False
         self.__game_over = False
 
+        self.make_help_menu()
         self.initialize_intro()
 
     def initialize_intro(self):
-        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
-        self.__start_canvas.pack(fill=tk.BOTH)
+
+        self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
+        self.__start_canvas.pack(expand=True)
 
         self.__root.bind("<Button-1>", self.advance_intro)
 
@@ -41,23 +44,28 @@ class DungeonAdventure:
     def advance_intro(self, keypress):
         if self.intro_slide == 0:
             self.__title_image = tk.PhotoImage(file="assets/intro_1.png")
-            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__start_canvas.create_image(
+                    self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 1:
             self.__title_image = tk.PhotoImage(file="assets/intro_2.png")
-            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__start_canvas.create_image(
+                    self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 2:
             self.__title_image = tk.PhotoImage(file="assets/intro_3.png")
-            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__start_canvas.create_image(
+                    self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 3:
             self.__title_image = tk.PhotoImage(file="assets/controls.png")
-            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__start_canvas.create_image(
+                    self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 4:
             self.__title_image = tk.PhotoImage(file="assets/objectives.png")
-            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__start_canvas.create_image(
+                    self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
             self.intro_slide += 1
         elif self.intro_slide == 5:
             self.__start_canvas.destroy()
@@ -70,10 +78,11 @@ class DungeonAdventure:
         # Setup dungeon & get size
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
         textbox_size = self.__dungeon.get_size() * 3
+        tb_y = self.__window_size[1]//2
 
         # build legend textbox
         self.__legend = tk.Text(self.__start_canvas, width=38, height=textbox_size)
-        self.__legend.place(x=155, y=335, anchor=CENTER)
+        self.__legend.place(x=0, y=tb_y, anchor="w")
 
         spacer = "\n" * ((textbox_size - 10) // 2)
         self.__legend.insert("end", 
@@ -82,11 +91,11 @@ class DungeonAdventure:
 
         # build dungeon display
         self.__dungeon_display = tk.Text(self.__start_canvas, width=textbox_size, height=textbox_size)
-        self.__dungeon_display.place(x=469, y=335, anchor=CENTER)
+        self.__dungeon_display.place(x=self.__window_size[0]//2, y=tb_y, anchor=CENTER)
 
         # build message box
         self.__message_log = tk.Text(self.__start_canvas, width=40, height=textbox_size)
-        self.__message_log.place(x=790, y=335, anchor=CENTER)
+        self.__message_log.place(x=self.__window_size[0], y=tb_y, anchor="e")
         self.__message_log.config(state="disabled")
 
         self.draw_map()
@@ -199,40 +208,6 @@ class DungeonAdventure:
     def announce(self, message):
 
         log_text = self.__message_log.get("1.0", "end")
-        string_wrap = False
-
-        # If the string is too long, search for newline or space for wrap
-        newline_index = 38 if len(message) >= 39 else len(message) - 1
-        space_index = 38 if len(message) >= 39 else len(message) - 1
-
-        while len(message) > 39:
-
-            # search for newlines first so we can have more control over formatting
-            while newline_index > 0:
-                if message[newline_index] == "\n":
-                    log_text += "\n" + message[:newline_index]
-                    message = message[newline_index+1:]
-
-                    # After splitting the string, reset both indices for next loop
-                    newline_index = 38 if len(message) >= 39 else len(message) - 1
-                    space_index = 38 if len(message) >= 39 else len(message) - 1
-                    string_wrap = True
-                else:
-                    newline_index -= 1
-
-            # space search follows same logic as newline search
-            while space_index > 0:
-                if message[space_index] == " ":
-                    log_text += "\n" + message[:space_index]
-                    message = message[space_index+1:]
-
-                    newline_index = 38 if len(message) >= 39 else len(message) - 1
-                    space_index = 38 if len(message) >= 39 else len(message) - 1
-                    string_wrap = True
-                else:
-                    space_index -= 1
-        if string_wrap:
-            message = " " + message
         log_text += message
         log_text = log_text.split("\n")
 
@@ -254,43 +229,39 @@ class DungeonAdventure:
         if self.__adventurer.is_dead():
             self.announce("You lose!  Better luck next time!")
         else:
-            self.announce("Victory is yours!\nYou have taken the four pillars of object-oriented progamming!")
+            self.announce("Victory is yours!\nYou have taken the four pillars of object-oriented \nprogamming!")
             self.announce("Without them, the dungeon crumbles behind you.  Whoops!")
-
-        self.announce("Press Enter to return to menu.\n")
-        self.__root.bind("<Enter>", self.return_to_menu)
-
-    def return_to_menu(self, keypress):
-        self.__root.unbind("<Enter>")
-        self.__game_over = False
-        self.start_menu()
 
     def start_menu(self):
         """
         Creates and displays the start menu.
         """
         if not self.__start_canvas:
-            self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
-            self.__start_canvas.pack(fill=tk.BOTH)
+            self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
+            self.__start_canvas.pack(expand=True)
 
-            self.__title_image = tk.PhotoImage(file="assets/title.png")
-            self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+            self.__title_image = tk.PhotoImage(file="title.png")
+            self.__start_canvas.create_image(self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
         else:
             self.__reset_start_canvas("assets/title.png")
 
         # --Buttons
+        button_y = self.__window_size[1]//2 + 240
+        button_x = self.__window_size[0]//2 - 40
+
         st_menu_button1 = tk.Button(text='Start', font="Verdana 10 bold", width=5)
-        self.__start_canvas.create_window(220, 580, window=st_menu_button1)
+        self.__start_canvas.create_window(button_x-260, button_y, window=st_menu_button1)
         st_menu_button1.config(command=self.input_name)
 
         st_menu_button2 = tk.Button(text='Instruction', font="Verdana 10 bold", width=10)
-        self.__start_canvas.create_window(480, 580, window=st_menu_button2)
+        self.__start_canvas.create_window(button_x, button_y, window=st_menu_button2)
         st_menu_button2.config(command=self.display_instructions)
 
         st_menu_button3 = tk.Button(text='Quit', font="Verdana 10 bold", width=5)
-        self.__start_canvas.create_window(740, 580, window=st_menu_button3)
+        self.__start_canvas.create_window(button_x+260, button_y, window=st_menu_button3)
         st_menu_button3.config(command=quit)
 
+    def make_help_menu(self):
         # --Menu (Help)
         menu_bar = Menu(self.__root)
 
@@ -304,11 +275,11 @@ class DungeonAdventure:
 
     def __reset_start_canvas(self, file_str):
         self.__start_canvas.destroy()
-        self.__start_canvas = tk.Canvas(self.__root, width=940, height=675)
-        self.__start_canvas.pack(fill=tk.BOTH)
+        self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
+        self.__start_canvas.pack(expand=True)
 
         self.__title_image = tk.PhotoImage(file=file_str)
-        self.__start_canvas.create_image(0, 0, anchor=NW, image=self.__title_image)
+        self.__start_canvas.create_image(self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
 
     def donothing(self):
         filewin = Toplevel(self.__root)
@@ -353,23 +324,26 @@ class DungeonAdventure:
 
         self.__reset_start_canvas("assets/title.png")
 
+        button_y = self.__window_size[1]//2 + 240
+        button_x = self.__window_size[0]//2 - 100
+
         tk.Label(self.__start_canvas,
-                 text="Player Name").place(x=240, y=540)
+                 text="Player Name").place(x=button_x-90, y=button_y-40)
         tk.Label(self.__start_canvas,
-                 text="Difficulty").place(x=240, y=580)
+                 text="Difficulty").place(x=button_x-90, y=button_y)
 
         adv_name = tk.Entry(self.__start_canvas)
         diff = tk.Entry(self.__start_canvas)
 
-        adv_name.place(x=330, y=540)
-        diff.place(x=330, y=580)
+        adv_name.place(x=button_x, y=button_y-40)
+        diff.place(x=button_x, y=button_y)
 
         tk.Button(self.__start_canvas,
                   text='Quit',
-                  command=self.__root.destroy).place(x=560, y=580)
+                  command=self.__root.destroy).place(x=button_x+200, y=button_y)
 
         tk.Button(self.__start_canvas,
-                  text='Accept', command=user_input_adventurer_name).place(x=560, y=540)
+                  text='Accept', command=user_input_adventurer_name).place(x=button_x+200, y=button_y-40)
 
     def display_instructions(self):
         instructions = Toplevel(self.__root)

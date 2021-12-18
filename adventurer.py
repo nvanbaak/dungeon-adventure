@@ -103,7 +103,7 @@ class Adventurer:
     def take_damage(self, damage, source):
 
         self.__hp -= damage
-        self.__game.announce(f"Oh no! {self.__name} took {damage} dmg from {source}!  They are now at {self.__hp} hp!")
+        self.__game.announce(f"Oh no! {self.__name} took {damage} dmg from {source}!\nThey are now at {self.__hp} hp!")
 
     def exit(self):
         if len(self.__pillars) >= 4:
@@ -114,12 +114,6 @@ class Adventurer:
             return
 
     def __str__(self):
-        def assemble_inventory_str(self, line):
-            pass
-
-        # calculate length of box
-        # box_length = 8 + len(self.__name)
-        # border = "+" + "-" * box_length + "+"
 
         # produce a content line for each status item
         name_str = f"Name: {self.__name}"
@@ -152,15 +146,6 @@ class Adventurer:
         output_str += f"\n{border}\n"
 
         return output_str
-
-
-
-
-        # return "\nName: " + self.__name + "  \nHP: " + str(self.__hp) + "  \nHealth potions: " + \
-        #        str(self.__health_p) + " \nVision potions: " + str(self.__vision_p) + "  \nPillars Found: " + \
-        #        str(self.__pillars)
-
-
 
 
     # debug code, only used for unit tests
