@@ -35,6 +35,8 @@ class DungeonAdventure:
     def initialize_intro(self):
 
         self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
+        self.__start_canvas.configure(bg="#FFBF90")
+
         self.__start_canvas.pack(expand=True)
 
         self.__root.bind("<Button-1>", self.advance_intro)
@@ -73,7 +75,7 @@ class DungeonAdventure:
             self.start_menu()
 
     def __start_game(self):
-        self.__reset_start_canvas("assets/background.png")
+        self.__reset_start_canvas(None)
 
         # Setup dungeon & get size
         self.__dungeon = Dungeon(self.__diff, self, self.__adventurer)
@@ -276,10 +278,12 @@ class DungeonAdventure:
     def __reset_start_canvas(self, file_str):
         self.__start_canvas.destroy()
         self.__start_canvas = tk.Canvas(self.__root, width=self.__window_size[0], height=self.__window_size[1])
+        self.__start_canvas.configure(bg="#FFBF90")
         self.__start_canvas.pack(expand=True)
 
-        self.__title_image = tk.PhotoImage(file=file_str)
-        self.__start_canvas.create_image(self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
+        if file_str:
+            self.__title_image = tk.PhotoImage(file=file_str)
+            self.__start_canvas.create_image(self.__window_size[0]//2, self.__window_size[1]//2, anchor=CENTER, image=self.__title_image)
 
     def donothing(self):
         filewin = Toplevel(self.__root)
@@ -314,7 +318,6 @@ class DungeonAdventure:
                 return
 
             if 4 > int(self.__diff) and int(self.__diff) > 0:
-                print(f"Name: {adv_name.get()}\nDifficulty: {diff.get()}")
                 self.__adventurer = Adventurer(adv_name.get(), self)
                 self.__reset_start_canvas("assets/background.png")
                 self.__start_game()
@@ -328,9 +331,9 @@ class DungeonAdventure:
         button_x = self.__window_size[0]//2 - 100
 
         tk.Label(self.__start_canvas,
-                 text="Player Name").place(x=button_x-90, y=button_y-40)
+                 text="Player Name").place(x=button_x-110, y=button_y-40)
         tk.Label(self.__start_canvas,
-                 text="Difficulty").place(x=button_x-90, y=button_y)
+                 text="Difficulty (1-3):").place(x=button_x-110, y=button_y)
 
         adv_name = tk.Entry(self.__start_canvas)
         diff = tk.Entry(self.__start_canvas)
